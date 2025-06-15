@@ -1,10 +1,10 @@
 
-
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Share } from 'lucide-react';
+import { ArrowLeft, Share, Heart } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import BottomNavigation from '../components/BottomNavigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { shareArtwork, getShareableData } from '../utils/socialShare';
 
 // Mock data for different artworks - in real app this would come from an API
 const artworkData = {
@@ -17,7 +17,8 @@ const artworkData = {
     details: {
       size: "20 x 24 inches",
       medium: "Acrylic on Canvas",
-      year: "2024"
+      year: "2024",
+      price: "$1,200"
     }
   },
   2: {
@@ -29,7 +30,8 @@ const artworkData = {
     details: {
       size: "30 x 40 inches",
       medium: "Oil on Canvas",
-      year: "2024"
+      year: "2024",
+      price: "$2,800"
     }
   },
   3: {
@@ -41,7 +43,8 @@ const artworkData = {
     details: {
       size: "18 x 24 inches",
       medium: "Watercolor on Paper",
-      year: "2024"
+      year: "2024",
+      price: "$950"
     }
   },
   4: {
@@ -53,15 +56,15 @@ const artworkData = {
     details: {
       size: "24 x 30 inches",
       medium: "Mixed Media",
-      year: "2024"
+      year: "2024",
+      price: "$1,650"
     }
   }
 };
 
 const ArtworkDetail = () => {
-  const {
-    id
-  } = useParams();
+  const { id } = useParams();
+  const [isLoved, setIsLoved] = useState(false);
 
   // Scroll to top when component mounts to focus on image
   useEffect(() => {
@@ -70,7 +73,18 @@ const ArtworkDetail = () => {
 
   // Get artwork data based on ID, fallback to first artwork if ID not found
   const artwork = artworkData[parseInt(id || '1') as keyof typeof artworkData] || artworkData[1];
-  return <div className="min-h-screen bg-white pb-20">
+
+  const handleShare = async () => {
+    const shareData = getShareableData(artwork);
+    await shareArtwork(shareData);
+  };
+
+  const handleLove = () => {
+    setIsLoved(!isLoved);
+  };
+
+  return (
+    <div className="min-h-screen bg-white pb-20">
       {/* Header with title overlay */}
       <header className="relative">
         <div className="absolute top-0 left-0 right-0 z-10 flex justify-between items-center p-4">
@@ -85,8 +99,8 @@ const ArtworkDetail = () => {
         {/* Artwork Image with title overlay */}
         <div className="relative h-96 overflow-hidden">
           <div className="w-full h-full bg-cover bg-center" style={{
-          backgroundImage: `url(${artwork.image})`
-        }}></div>
+            backgroundImage: `url(${artwork.image})`
+          }}></div>
           
           {/* Title overlay at bottom */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 pt-12">
@@ -98,24 +112,41 @@ const ArtworkDetail = () => {
 
       {/* Content */}
       <div className="px-6 py-6">
-        {/* Mobile-Friendly Details Cards */}
-        <div className="space-y-3 mb-6">
-          <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-            <span className="text-sm font-medium text-gray-600">Size</span>
-            <span className="text-sm font-semibold text-gray-800">{artwork.details.size}</span>
+        {/* Price and Action Buttons */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="text-2xl font-bold text-gray-900">{artwork.details.price}</div>
+          <div className="flex gap-2">
+            <button 
+              onClick={handleLove}
+              className={`p-2 rounded-full border transition-colors ${
+                isLoved 
+                  ? 'bg-red-50 border-red-200 text-red-600' 
+                  : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <Heart size={18} fill={isLoved ? 'currentColor' : 'none'} />
+            </button>
+            <button 
+              onClick={handleShare}
+              className="p-2 bg-gray-50 border border-gray-200 text-gray-600 rounded-full hover:bg-gray-100 transition-colors"
+            >
+              <Share size={18} />
+            </button>
           </div>
-          <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-            <span className="text-sm font-medium text-gray-600">Medium</span>
-            <span className="text-sm font-semibold text-gray-800 text-right">{artwork.details.medium}</span>
-          </div>
+        </div>
+
+        {/* Compact Details */}
+        <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-6">
+          <span>{artwork.details.size}</span>
+          <span>•</span>
+          <span>{artwork.details.medium}</span>
+          <span>•</span>
+          <span>{artwork.details.year}</span>
         </div>
 
         {/* Description */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-lg font-bold text-gray-800">Description</h2>
-            <span className="text-sm font-semibold text-gray-600">Year {artwork.details.year}</span>
-          </div>
+          <h2 className="text-lg font-bold text-gray-800 mb-3">Description</h2>
           <p className="text-gray-700 leading-relaxed">{artwork.longDescription}</p>
         </div>
 
@@ -136,8 +167,8 @@ const ArtworkDetail = () => {
       </div>
 
       <BottomNavigation />
-    </div>;
+    </div>
+  );
 };
 
 export default ArtworkDetail;
-
