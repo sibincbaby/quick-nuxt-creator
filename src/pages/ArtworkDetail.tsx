@@ -72,7 +72,13 @@ const ArtworkDetail = () => {
   }, [id]);
 
   // Get artwork data based on ID, fallback to first artwork if ID not found
-  const artwork = artworkData[parseInt(id || '1') as keyof typeof artworkData] || artworkData[1];
+  const artworkId = parseInt(id || '1');
+  const artwork = artworkData[artworkId as keyof typeof artworkData] || artworkData[1];
+
+  console.log('Current ID from URL:', id);
+  console.log('Parsed artwork ID:', artworkId);
+  console.log('Selected artwork:', artwork);
+  console.log('Artwork price:', artwork.details.price);
 
   const handleShare = async () => {
     const shareData = getShareableData(artwork);
@@ -91,7 +97,7 @@ const ArtworkDetail = () => {
           <Link to="/shop" className="p-2 bg-black/20 backdrop-blur-sm rounded-full">
             <ArrowLeft className="w-6 h-6 text-white" />
           </Link>
-          <button className="p-2 bg-black/20 backdrop-blur-sm rounded-full">
+          <button onClick={handleShare} className="p-2 bg-black/20 backdrop-blur-sm rounded-full">
             <Share className="w-6 h-6 text-white" />
           </button>
         </div>
@@ -141,7 +147,7 @@ const ArtworkDetail = () => {
           <span>•</span>
           <span>{artwork.details.medium}</span>
           <span>•</span>
-          <span>{artwork.details.year}</span>
+          <span>Year: {artwork.details.year}</span>
         </div>
 
         {/* Description */}
