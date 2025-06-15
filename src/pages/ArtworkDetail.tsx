@@ -3,6 +3,59 @@ import { ArrowLeft, Share } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import BottomNavigation from '../components/BottomNavigation';
 import { useEffect } from 'react';
+
+// Mock data for different artworks - in real app this would come from an API
+const artworkData = {
+  1: {
+    id: 1,
+    title: "Whispers of Dawn",
+    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
+    description: "Capturing the ethereal beauty of early morning light filtering through ancient trees.",
+    longDescription: "This acrylic painting explores the gentle transition from night to day, capturing the soft, ethereal light that filters through morning mist. The artist's use of layered acrylics creates depth and movement, inviting viewers to feel the peaceful serenity of dawn.",
+    details: {
+      size: "20 x 24 inches",
+      medium: "Acrylic on Canvas",
+      year: "2024"
+    }
+  },
+  2: {
+    id: 2,
+    title: "Urban Reflections",
+    image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&h=600&fit=crop",
+    description: "The interplay of light and shadow in metropolitan spaces, captured through bold artistic expression.",
+    longDescription: "This oil painting represents the artist's exploration of urban life and the complex interplay of light and shadow in metropolitan environments. The careful balance of warm and cool tones creates a sense of movement and energy that speaks to the viewer's experience of city life.",
+    details: {
+      size: "30 x 40 inches",
+      medium: "Oil on Canvas",
+      year: "2024"
+    }
+  },
+  3: {
+    id: 3,
+    title: "Emotional Currents",
+    image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=600&fit=crop",
+    description: "An exploration of human emotion through abstract form and vibrant color.",
+    longDescription: "This watercolor artwork delves into the complexity of human emotions, using flowing forms and vibrant colors to represent the different layers of feeling we experience. The fluid nature of watercolor perfectly captures the ever-changing nature of our emotional landscape.",
+    details: {
+      size: "18 x 24 inches",
+      medium: "Watercolor on Paper",
+      year: "2024"
+    }
+  },
+  4: {
+    id: 4,
+    title: "Serenity's Edge",
+    image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&h=600&fit=crop",
+    description: "The delicate balance between motion and stillness in natural environments.",
+    longDescription: "This mixed media artwork explores the peaceful moments found in nature's constant movement. Through a combination of different materials and techniques, the artist creates a sense of calm that exists at the edge of motion, capturing those fleeting moments of perfect balance.",
+    details: {
+      size: "24 x 30 inches",
+      medium: "Mixed Media",
+      year: "2024"
+    }
+  }
+};
+
 const ArtworkDetail = () => {
   const {
     id
@@ -12,58 +65,6 @@ const ArtworkDetail = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
-
-  // Mock data for different artworks - in real app this would come from an API
-  const artworkData = {
-    1: {
-      id: 1,
-      title: "Whispers of Dawn",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
-      description: "Capturing the ethereal beauty of early morning light filtering through ancient trees.",
-      longDescription: "This acrylic painting explores the gentle transition from night to day, capturing the soft, ethereal light that filters through morning mist. The artist's use of layered acrylics creates depth and movement, inviting viewers to feel the peaceful serenity of dawn.",
-      details: {
-        size: "20 x 24 inches",
-        medium: "Acrylic on Canvas",
-        year: "2024"
-      }
-    },
-    2: {
-      id: 2,
-      title: "Urban Reflections",
-      image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&h=600&fit=crop",
-      description: "The interplay of light and shadow in metropolitan spaces, captured through bold artistic expression.",
-      longDescription: "This oil painting represents the artist's exploration of urban life and the complex interplay of light and shadow in metropolitan environments. The careful balance of warm and cool tones creates a sense of movement and energy that speaks to the viewer's experience of city life.",
-      details: {
-        size: "30 x 40 inches",
-        medium: "Oil on Canvas",
-        year: "2024"
-      }
-    },
-    3: {
-      id: 3,
-      title: "Emotional Currents",
-      image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=600&fit=crop",
-      description: "An exploration of human emotion through abstract form and vibrant color.",
-      longDescription: "This watercolor artwork delves into the complexity of human emotions, using flowing forms and vibrant colors to represent the different layers of feeling we experience. The fluid nature of watercolor perfectly captures the ever-changing nature of our emotional landscape.",
-      details: {
-        size: "18 x 24 inches",
-        medium: "Watercolor on Paper",
-        year: "2024"
-      }
-    },
-    4: {
-      id: 4,
-      title: "Serenity's Edge",
-      image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&h=600&fit=crop",
-      description: "The delicate balance between motion and stillness in natural environments.",
-      longDescription: "This mixed media artwork explores the peaceful moments found in nature's constant movement. Through a combination of different materials and techniques, the artist creates a sense of calm that exists at the edge of motion, capturing those fleeting moments of perfect balance.",
-      details: {
-        size: "24 x 30 inches",
-        medium: "Mixed Media",
-        year: "2024"
-      }
-    }
-  };
 
   // Get artwork data based on ID, fallback to first artwork if ID not found
   const artwork = artworkData[parseInt(id || '1') as keyof typeof artworkData] || artworkData[1];
@@ -122,7 +123,7 @@ const ArtworkDetail = () => {
       </div>
 
       {/* Sticky Action Buttons */}
-      <div className="fixed bottom-20 left-0 right-0 bg-white  p-4 shadow-lg">
+      <div className="fixed bottom-20 left-0 right-0 bg-white p-4">
         <div className="flex gap-3 max-w-md mx-auto">
           <Button className="flex-1 bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 rounded-lg">
             Buy Now
@@ -136,4 +137,5 @@ const ArtworkDetail = () => {
       <BottomNavigation />
     </div>;
 };
+
 export default ArtworkDetail;
