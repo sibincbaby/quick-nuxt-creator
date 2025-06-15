@@ -97,7 +97,8 @@ const Portfolio = () => {
   const yearCounts = useMemo(() => getFilterCounts(portfolioItems, 'year'), []);
 
   const filteredItems = useMemo(() => {
-    let filtered = fuzzySearch(portfolioItems, searchTerm);
+    // Cast portfolioItems to SearchableItem[] for fuzzy search, then cast back
+    let filtered = fuzzySearch(portfolioItems as any, searchTerm) as typeof portfolioItems;
     
     if (selectedFilter === 'featured') {
       filtered = filtered.filter(item => item.featured);
