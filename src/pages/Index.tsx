@@ -1,6 +1,5 @@
-
 import { Link } from 'react-router-dom';
-import { Search, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import BottomNavigation from '../components/BottomNavigation';
 
 const Index = () => {
@@ -43,7 +42,6 @@ const Index = () => {
       {/* Header */}
       <header className="flex justify-between items-center p-6 bg-white">
         <h1 className="text-2xl font-bold text-gray-900">Artisan's Canvas</h1>
-        <Search className="w-6 h-6 text-gray-600" />
       </header>
 
       {/* Hero Image */}
