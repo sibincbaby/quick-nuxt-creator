@@ -124,7 +124,7 @@ const ArtworkDetail = () => {
       </div>
 
       {/* Sticky Action Buttons */}
-      <div className="fixed bottom-16 left-0 right-0 bg-white px-4 py-2">
+      <div className="fixed bottom-20 left-0 right-0 bg-white px-4 py-2">
         <div className="flex gap-3 max-w-md mx-auto">
           <Button className="flex-1 bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 rounded-lg">
             Buy Now
