@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Heart, Share2, Search } from 'lucide-react';
@@ -67,10 +66,8 @@ const Shop = () => {
     }
   ];
 
-  // Get filter counts
   const typeCounts = useMemo(() => getFilterCounts(artworks, 'type'), [artworks]);
 
-  // Filter and sort logic
   const filteredAndSortedArtworks = useMemo(() => {
     let filtered = fuzzySearch(artworks, searchTerm);
     
@@ -163,16 +160,16 @@ const Shop = () => {
           <ArtworkGridSkeleton count={6} columns={2} />
         ) : (
           <>
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-6">
               {filteredAndSortedArtworks.map((artwork) => (
                 <div key={artwork.id} className="group relative bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                  {/* Image Section */}
-                  <div className="relative aspect-square">
+                  {/* Image Section with reduced hover scale */}
+                  <div className="relative aspect-square overflow-hidden">
                     <Link to={`/artwork/${artwork.id}`} className="block h-full">
                       <LazyImage
                         src={artwork.image}
                         alt={artwork.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                       />
                       
                       {/* Instagram-like overlay on hover */}
@@ -226,8 +223,8 @@ const Shop = () => {
                     </Link>
                   </div>
 
-                  {/* Details Section */}
-                  <div className="p-4">
+                  {/* Details Section with extra padding to prevent overlap */}
+                  <div className="p-4 pt-5">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
                         <Link to={`/artwork/${artwork.id}`}>

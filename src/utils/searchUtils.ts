@@ -6,7 +6,7 @@ interface SearchableItem {
   medium: string;
   category?: string;
   series?: string;
-  year?: string;
+  year: string;
   image: string;
   featured: boolean;
   price?: string;

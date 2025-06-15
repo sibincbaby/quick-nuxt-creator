@@ -71,13 +71,13 @@ const LazyImage = ({ src, alt, className, style, onClick, placeholder }: LazyIma
         </div>
       )}
       
-      {/* Actual Image */}
+      {/* Actual Image with reduced scale effect */}
       {isInView && (
         <img
           src={src}
           alt={alt}
           className={`w-full h-full object-cover transition-all duration-500 ${
-            isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-110'
+            isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
           }`}
           onLoad={handleImageLoad}
           onError={handleImageError}
