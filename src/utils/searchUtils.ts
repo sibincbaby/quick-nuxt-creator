@@ -7,8 +7,8 @@ interface SearchableItem {
   category?: string;
   series?: string;
   year?: string;
-  image?: string;
-  featured?: boolean;
+  image: string;
+  featured: boolean;
   price?: string;
   type?: string;
   date?: string;
