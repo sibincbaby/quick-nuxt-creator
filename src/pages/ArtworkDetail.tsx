@@ -1,4 +1,3 @@
-
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Share, Heart } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -89,11 +88,15 @@ const ArtworkDetail = () => {
           </button>
         </div>
 
-        {/* Artwork Image with title overlay */}
+        {/* Artwork Image with title overlay and smooth transition */}
         <div className="relative h-96 overflow-hidden">
-          <div className="w-full h-full bg-cover bg-center" style={{
-            backgroundImage: `url(${artwork.image})`
-          }}></div>
+          <div 
+            className="w-full h-full bg-cover bg-center transition-all duration-700 ease-out" 
+            style={{
+              backgroundImage: `url(${artwork.image})`,
+              viewTransitionName: `artwork-image-${artwork.id}`
+            }}
+          ></div>
           
           {/* Title overlay at bottom */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 pt-12">
@@ -104,7 +107,7 @@ const ArtworkDetail = () => {
       </header>
 
       {/* Content */}
-      <div className="px-6 py-6">
+      <div className="px-6 py-6 animate-fade-in">
         {/* Price and Action Buttons */}
         <div className="flex items-center justify-between mb-6">
           <div className="text-2xl font-bold text-gray-900">{artwork.price}</div>

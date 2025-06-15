@@ -204,13 +204,17 @@ const Shop = () => {
             <div className="grid grid-cols-1 gap-6">
               {filteredAndSortedArtworks.map((artwork) => (
                 <div key={artwork.id} className="group relative bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                  {/* Image Section - Clean, no action buttons */}
+                  {/* Image Section with smooth transition */}
                   <div className="relative aspect-square overflow-hidden">
-                    <Link to={`/artwork/${artwork.id}`} className="block h-full">
+                    <Link 
+                      to={`/artwork/${artwork.id}`} 
+                      className="block h-full"
+                      style={{ viewTransitionName: `artwork-image-${artwork.id}` }}
+                    >
                       <LazyImage
                         src={artwork.image}
                         alt={artwork.title}
-                        className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
+                        className="w-full h-full object-cover group-hover:scale-102 transition-all duration-500 ease-out"
                       />
                       
                       {/* Price tag only */}
