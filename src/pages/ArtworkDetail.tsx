@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Share, Heart } from 'lucide-react';
+import { ArrowLeft, Heart, Share } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import BottomNavigation from '../components/BottomNavigation';
 import { useEffect, useState } from 'react';
@@ -83,9 +83,6 @@ const ArtworkDetail = () => {
           <Link to="/shop" className="p-2 bg-black/20 backdrop-blur-sm rounded-full">
             <ArrowLeft className="w-6 h-6 text-white" />
           </Link>
-          <button onClick={handleShare} className="p-2 bg-black/20 backdrop-blur-sm rounded-full">
-            <Share className="w-6 h-6 text-white" />
-          </button>
         </div>
 
         {/* Artwork Image with title overlay and smooth transition */}
