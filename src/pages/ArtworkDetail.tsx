@@ -1,11 +1,16 @@
-
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Share } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import BottomNavigation from '../components/BottomNavigation';
+import { useEffect } from 'react';
 
 const ArtworkDetail = () => {
   const { id } = useParams();
+
+  // Scroll to top when component mounts to focus on image
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   // Mock data for different artworks - in real app this would come from an API
   const artworkData = {
@@ -63,62 +68,68 @@ const ArtworkDetail = () => {
   const artwork = artworkData[parseInt(id || '1') as keyof typeof artworkData] || artworkData[1];
 
   return (
-    <div className="min-h-screen bg-white pb-20">
-      {/* Header */}
-      <header className="flex justify-between items-center p-4 bg-white">
-        <Link to="/shop" className="p-2">
-          <ArrowLeft className="w-6 h-6 text-gray-900" />
-        </Link>
-        <Share className="w-6 h-6 text-gray-900" />
+    <div className="min-h-screen bg-white pb-32">
+      {/* Header with title overlay */}
+      <header className="relative">
+        <div className="absolute top-0 left-0 right-0 z-10 flex justify-between items-center p-4">
+          <Link to="/shop" className="p-2 bg-black/20 backdrop-blur-sm rounded-full">
+            <ArrowLeft className="w-6 h-6 text-white" />
+          </Link>
+          <button className="p-2 bg-black/20 backdrop-blur-sm rounded-full">
+            <Share className="w-6 h-6 text-white" />
+          </button>
+        </div>
+
+        {/* Artwork Image with title overlay */}
+        <div className="relative h-96 overflow-hidden">
+          <div 
+            className="w-full h-full bg-cover bg-center"
+            style={{ backgroundImage: `url(${artwork.image})` }}
+          ></div>
+          
+          {/* Title overlay at bottom */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 pt-12">
+            <h1 className="text-2xl font-bold text-white mb-1">{artwork.title}</h1>
+            <p className="text-white/90 text-sm">{artwork.description}</p>
+          </div>
+        </div>
       </header>
 
-      {/* Artwork Image */}
-      <div className="px-0 mb-8">
-        <div 
-          className="w-full h-80 bg-cover bg-center"
-          style={{ backgroundImage: `url(${artwork.image})` }}
-        ></div>
-      </div>
-
       {/* Content */}
-      <div className="px-6">
-        {/* Title */}
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">{artwork.title}</h1>
-        
-        {/* Description */}
-        <p className="text-gray-600 leading-relaxed mb-8">{artwork.description}</p>
-
-        {/* Details */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Details</h2>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center py-3 border-t border-gray-200">
-              <span className="text-teal-600 font-medium">Size</span>
-              <span className="text-gray-900">{artwork.details.size}</span>
-            </div>
-            <div className="flex justify-between items-center py-3 border-t border-gray-200">
-              <span className="text-teal-600 font-medium">Medium</span>
-              <span className="text-gray-900">{artwork.details.medium}</span>
-            </div>
-            <div className="flex justify-between items-center py-3 border-t border-gray-200">
-              <span className="text-teal-600 font-medium">Year</span>
-              <span className="text-gray-900">{artwork.details.year}</span>
-            </div>
+      <div className="px-6 py-6">
+        {/* Compact Details Grid */}
+        <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+          <div className="text-center">
+            <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Size</div>
+            <div className="font-medium text-gray-900 text-sm">{artwork.details.size}</div>
+          </div>
+          <div className="text-center border-l border-r border-gray-200">
+            <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Medium</div>
+            <div className="font-medium text-gray-900 text-sm">{artwork.details.medium}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Year</div>
+            <div className="font-medium text-gray-900 text-sm">{artwork.details.year}</div>
           </div>
         </div>
 
-        {/* Long Description */}
+        {/* Description */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Description</h2>
-          <p className="text-gray-600 leading-relaxed">{artwork.longDescription}</p>
+          <h2 className="text-lg font-bold text-gray-900 mb-3">About This Artwork</h2>
+          <p className="text-gray-700 leading-relaxed">{artwork.longDescription}</p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-4 mb-8">
+        {/* Additional space for content */}
+        <div className="h-20"></div>
+      </div>
+
+      {/* Sticky Action Buttons */}
+      <div className="fixed bottom-20 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg">
+        <div className="flex gap-3 max-w-md mx-auto">
           <Button className="flex-1 bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 rounded-lg">
             Buy Now
           </Button>
-          <Button variant="outline" className="flex-1 border-gray-300 text-gray-700 font-medium py-3 rounded-lg">
+          <Button variant="outline" className="flex-1 border-gray-300 text-gray-700 font-medium py-3 rounded-lg hover:bg-gray-50">
             Inquire
           </Button>
         </div>
