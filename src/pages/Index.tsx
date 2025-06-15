@@ -1,13 +1,41 @@
-
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import BottomNavigation from '../components/BottomNavigation';
-import { useArtworks, usePosts } from '../hooks/useSanityData';
-import { urlFor } from '../lib/sanity';
 
 const Index = () => {
-  const { artworks: featuredArtworks, loading: artworksLoading } = useArtworks(true);
-  const { posts: featuredPosts, loading: postsLoading } = usePosts(true);
+  const featuredArtworks = [
+    {
+      id: 1,
+      title: "Whispers of the Wind",
+      image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=500&fit=crop",
+      price: "₹12,000",
+      type: "acrylic"
+    },
+    {
+      id: 2,
+      title: "Serenity's Embrace",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=500&fit=crop",
+      price: "₹16,000",
+      type: "oil"
+    }
+  ];
+
+  const blogPosts = [
+    {
+      id: 1,
+      category: "Artistic Process",
+      title: "The Journey of Creation",
+      summary: "Explore the artist's creative process, from initial inspiration to the final masterpiece.",
+      image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=100&h=100&fit=crop"
+    },
+    {
+      id: 2,
+      category: "Behind the Canvas",
+      title: "Stories Behind the Art",
+      summary: "Discover the stories and emotions that fuel the artist's work, adding depth and meaning to each piece.",
+      image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=100&h=100&fit=crop"
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-white pb-20">
@@ -33,75 +61,51 @@ const Index = () => {
             <ArrowRight className="w-4 h-4 ml-1" />
           </Link>
         </div>
-
-        {artworksLoading ? (
-          <div className="text-center py-8">
-            <div className="w-6 h-6 border-2 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-            <p className="text-gray-600 text-sm">Loading artworks...</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-4">
-            {featuredArtworks.slice(0, 2).map((artwork) => (
-              <Link 
-                key={artwork._id} 
-                to={`/artwork/${artwork.slug.current}`}
-                className="group"
-              >
-                <div className="bg-orange-50 rounded-lg p-4 shadow-sm group-hover:shadow-md transition-shadow">
-                  {artwork.images && artwork.images[0] && (
-                    <div 
-                      className="w-full h-48 rounded-lg bg-cover bg-center mb-3"
-                      style={{ backgroundImage: `url(${urlFor(artwork.images[0]).width(400).url()})` }}
-                    ></div>
-                  )}
-                  <h3 className="font-medium text-gray-900 text-sm mb-1">{artwork.title}</h3>
-                  {artwork.price && (
-                    <p className="text-teal-600 font-semibold text-sm mb-1">₹{artwork.price}</p>
-                  )}
-                  <p className="text-xs text-gray-500 capitalize">{artwork.medium}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-2 gap-4">
+          {featuredArtworks.map((artwork) => (
+            <Link 
+              key={artwork.id} 
+              to={`/artwork/${artwork.id}`}
+              className="group"
+            >
+              <div className="bg-orange-50 rounded-lg p-4 shadow-sm group-hover:shadow-md transition-shadow">
+                <div 
+                  className="w-full h-48 rounded-lg bg-cover bg-center mb-3"
+                  style={{ backgroundImage: `url(${artwork.image})` }}
+                ></div>
+                <h3 className="font-medium text-gray-900 text-sm mb-1">{artwork.title}</h3>
+                <p className="text-teal-600 font-semibold text-sm mb-1">{artwork.price}</p>
+                <p className="text-xs text-gray-500 capitalize">{artwork.type}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
       </section>
 
       {/* Recent Blog Posts */}
       <section className="px-6">
         <h2 className="text-xl font-bold text-gray-900 mb-6">Recent Blog Posts</h2>
-
-        {postsLoading ? (
-          <div className="text-center py-8">
-            <div className="w-6 h-6 border-2 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-            <p className="text-gray-600 text-sm">Loading posts...</p>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {featuredPosts.slice(0, 2).map((post) => (
-              <Link 
-                key={post._id} 
-                to={`/blog/${post.slug.current}`}
-                className="flex gap-4 group"
-              >
-                {post.coverImage && (
-                  <div 
-                    className="w-20 h-20 rounded-lg bg-cover bg-center flex-shrink-0"
-                    style={{ backgroundImage: `url(${urlFor(post.coverImage).width(100).url()})` }}
-                  ></div>
-                )}
-                <div className="flex-1">
-                  {post.tags && post.tags[0] && (
-                    <p className="text-teal-600 text-sm font-medium mb-1">{post.tags[0]}</p>
-                  )}
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-teal-700 transition-colors">
-                    {post.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{post.excerpt}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+        <div className="space-y-6">
+          {blogPosts.map((post) => (
+            <Link 
+              key={post.id} 
+              to={`/blog/${post.id}`}
+              className="flex gap-4 group"
+            >
+              <div 
+                className="w-20 h-20 rounded-lg bg-cover bg-center flex-shrink-0"
+                style={{ backgroundImage: `url(${post.image})` }}
+              ></div>
+              <div className="flex-1">
+                <p className="text-teal-600 text-sm font-medium mb-1">{post.category}</p>
+                <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-teal-700 transition-colors">
+                  {post.title}
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{post.summary}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
       </section>
 
       <BottomNavigation />

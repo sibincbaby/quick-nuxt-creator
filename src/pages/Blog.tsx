@@ -2,33 +2,46 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import BottomNavigation from '../components/BottomNavigation';
-import { usePosts } from '../hooks/useSanityData';
-import { urlFor } from '../lib/sanity';
 
 const Blog = () => {
-  const { posts, loading, error } = usePosts();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white pb-20 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading blog posts...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-white pb-20 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">Error loading blog posts: {error}</p>
-          <p className="text-gray-600">Please check your Sanity configuration.</p>
-        </div>
-      </div>
-    );
-  }
+  const blogPosts = [
+    {
+      id: 1,
+      category: "Artistic Process",
+      title: "The Journey of Creation",
+      summary: "Explore the artist's creative process, from initial inspiration to the final masterpiece.",
+      image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=300&h=200&fit=crop",
+      date: "March 15, 2024",
+      readTime: "5 min read"
+    },
+    {
+      id: 2,
+      category: "Behind the Canvas",
+      title: "Stories Behind the Art",
+      summary: "Discover the stories and emotions that fuel the artist's work, adding depth and meaning to each piece.",
+      image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=300&h=200&fit=crop",
+      date: "March 10, 2024",
+      readTime: "7 min read"
+    },
+    {
+      id: 3,
+      category: "Art Techniques",
+      title: "Mastering Color Theory",
+      summary: "Understanding how colors work together to create emotional depth and visual harmony in artwork.",
+      image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=300&h=200&fit=crop",
+      date: "March 5, 2024",
+      readTime: "4 min read"
+    },
+    {
+      id: 4,
+      category: "Artist Life",
+      title: "Finding Inspiration Everywhere",
+      summary: "How everyday moments and experiences can spark creative ideas for new artworks.",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=200&fit=crop",
+      date: "February 28, 2024",
+      readTime: "6 min read"
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-white pb-20">
@@ -43,50 +56,32 @@ const Blog = () => {
       {/* Blog Posts */}
       <section className="px-6">
         <div className="space-y-6">
-          {posts.map((post) => (
+          {blogPosts.map((post) => (
             <Link 
-              key={post._id} 
-              to={`/blog/${post.slug.current}`}
+              key={post.id} 
+              to={`/blog/${post.id}`}
               className="block group"
             >
               <article className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden group-hover:shadow-md transition-shadow">
-                {post.coverImage && (
-                  <div 
-                    className="w-full h-48 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${urlFor(post.coverImage).width(600).url()})` }}
-                  ></div>
-                )}
+                <div 
+                  className="w-full h-48 bg-cover bg-center"
+                  style={{ backgroundImage: `url(${post.image})` }}
+                ></div>
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-2">
-                    {post.tags && post.tags[0] && (
-                      <span className="text-teal-600 text-sm font-medium">{post.tags[0]}</span>
-                    )}
-                    {post.readTime && (
-                      <span className="text-gray-500 text-xs">{post.readTime}</span>
-                    )}
+                    <span className="text-teal-600 text-sm font-medium">{post.category}</span>
+                    <span className="text-gray-500 text-xs">{post.readTime}</span>
                   </div>
                   <h3 className="font-bold text-gray-900 mb-2 group-hover:text-teal-700 transition-colors">
                     {post.title}
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-3">{post.excerpt}</p>
-                  <p className="text-gray-500 text-xs">
-                    {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </p>
+                  <p className="text-gray-600 text-sm leading-relaxed mb-3">{post.summary}</p>
+                  <p className="text-gray-500 text-xs">{post.date}</p>
                 </div>
               </article>
             </Link>
           ))}
         </div>
-
-        {posts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No blog posts found.</p>
-          </div>
-        )}
       </section>
 
       <BottomNavigation />
