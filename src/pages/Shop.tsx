@@ -1,7 +1,7 @@
 
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Heart, Share2, Search } from 'lucide-react';
 import BottomNavigation from '../components/BottomNavigation';
 import SearchAndFilters from '../components/SearchAndFilters';
 import { ArtworkGridSkeleton } from '../components/SkeletonLoader';
