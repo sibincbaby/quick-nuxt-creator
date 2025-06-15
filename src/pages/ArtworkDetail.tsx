@@ -1,4 +1,3 @@
-
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Share, Heart } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -155,8 +154,8 @@ const ArtworkDetail = () => {
         <div className="h-20"></div>
       </div>
 
-      {/* Sticky Action Buttons - No gap with bottom nav */}
-      <div className="fixed bottom-16 left-0 right-0 bg-white px-4 py-4 border-t border-gray-100">
+      {/* Sticky Action Buttons - No border, just padding */}
+      <div className="fixed bottom-16 left-0 right-0 bg-white px-4 py-4">
         <div className="flex gap-3 max-w-md mx-auto">
           <Button className="flex-1 bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 rounded-lg">
             Buy Now
