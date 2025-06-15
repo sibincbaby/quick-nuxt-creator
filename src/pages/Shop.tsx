@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Search } from 'lucide-react';
@@ -15,7 +14,7 @@ const Shop = () => {
     {
       id: 1,
       title: "Original 1",
-      price: "$150",
+      price: "₹12,000",
       type: "acrylic",
       date: "2024-01-15",
       image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=500&fit=crop"
@@ -23,7 +22,7 @@ const Shop = () => {
     {
       id: 2,
       title: "Original 2", 
-      price: "$200",
+      price: "₹16,000",
       type: "oil",
       date: "2024-02-10",
       image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=500&fit=crop"
@@ -34,7 +33,7 @@ const Shop = () => {
     {
       id: 3,
       title: "Print 1",
-      price: "$50",
+      price: "₹4,000",
       type: "watercolor",
       date: "2024-01-20",
       image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=500&fit=crop"
@@ -42,7 +41,7 @@ const Shop = () => {
     {
       id: 4,
       title: "Print 2",
-      price: "$60",
+      price: "₹4,800",
       type: "mural",
       date: "2024-03-05",
       image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=400&h=500&fit=crop"
@@ -61,9 +60,9 @@ const Shop = () => {
     .sort((a, b) => {
       switch (sortBy) {
         case 'price-low':
-          return parseInt(a.price.replace('$', '')) - parseInt(b.price.replace('$', ''));
+          return parseInt(a.price.replace('₹', '').replace(',', '')) - parseInt(b.price.replace('₹', '').replace(',', ''));
         case 'price-high':
-          return parseInt(b.price.replace('$', '')) - parseInt(a.price.replace('$', ''));
+          return parseInt(b.price.replace('₹', '').replace(',', '')) - parseInt(a.price.replace('₹', '').replace(',', ''));
         case 'oldest':
           return new Date(a.date).getTime() - new Date(b.date).getTime();
         case 'latest':
