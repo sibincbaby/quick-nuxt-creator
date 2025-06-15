@@ -128,13 +128,17 @@ const ArtworkDetail = () => {
           </div>
         </div>
 
-        {/* Compact Details */}
-        <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-6">
-          <span>{artwork.size}</span>
-          <span>•</span>
-          <span>{artwork.medium}</span>
-          <span>•</span>
-          <span>Year: {artwork.year}</span>
+        {/* Compact Details - Fixed Layout */}
+        <div className="space-y-2 text-sm text-gray-600 mb-6">
+          <div className="flex flex-wrap items-center gap-2">
+            <span>{artwork.size}</span>
+            <span className="text-gray-400">•</span>
+            <span>Year: {artwork.year}</span>
+          </div>
+          <div>
+            <span className="font-medium">Medium: </span>
+            <span>{artwork.medium}</span>
+          </div>
         </div>
 
         {/* Description */}
