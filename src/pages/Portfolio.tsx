@@ -108,12 +108,12 @@ const Portfolio = () => {
     return filtered.sort((a, b) => {
       switch (sortBy) {
         case 'oldest':
-          return parseInt(a.year) - parseInt(b.year);
+          return parseInt(a.year || '0') - parseInt(b.year || '0');
         case 'alphabetical':
           return a.title.localeCompare(b.title);
         case 'latest':
         default:
-          return parseInt(b.year) - parseInt(a.year);
+          return parseInt(b.year || '0') - parseInt(a.year || '0');
       }
     });
   }, [searchTerm, selectedFilter, sortBy]);
@@ -290,7 +290,7 @@ const Portfolio = () => {
                 {filteredItems.map((item) => (
                   <div key={item.id} className="group">
                     <article className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden group-hover:shadow-md transition-all duration-300">
-                      <div className="w-full h-64 cursor-pointer group-hover:scale-105 transition-transform duration-300 overflow-hidden relative"
+                      <div className="w-full h-64 cursor-pointer group-hover:scale-102 transition-transform duration-300 overflow-hidden relative"
                            onClick={() => openLightbox(item)}>
                         <LazyImage
                           src={item.image}
