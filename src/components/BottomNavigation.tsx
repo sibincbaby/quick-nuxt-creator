@@ -1,13 +1,13 @@
 
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, FileText, User } from 'lucide-react';
+import { Home, ShoppingBag, FileText, User } from 'lucide-react';
 
 const BottomNavigation = () => {
   const location = useLocation();
   
   const navItems = [
     { icon: Home, label: 'Home', path: '/' },
-    { icon: Search, label: 'Shop', path: '/shop' },
+    { icon: ShoppingBag, label: 'Shop', path: '/shop' },
     { icon: FileText, label: 'Blog', path: '/blog' },
     { icon: User, label: 'Profile', path: '/profile' },
   ];
