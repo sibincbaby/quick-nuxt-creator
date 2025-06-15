@@ -4,86 +4,43 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, Palette } from 'lucide-react';
 import BottomNavigation from '../components/BottomNavigation';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { useArtworks } from '../hooks/useSanityData';
+import { urlFor } from '../lib/sanity';
 
 const Portfolio = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const { artworks, loading, error } = useArtworks();
 
-  const portfolioItems = [
-    {
-      id: 1,
-      title: "Whispers of Dawn",
-      image: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&h=600&fit=crop",
-      medium: "Oil on Canvas",
-      year: "2024",
-      series: "Nature's Symphony",
-      description: "Capturing the ethereal beauty of early morning light filtering through ancient trees.",
-      category: "oil",
-      featured: true
-    },
-    {
-      id: 2,
-      title: "Urban Reflections",
-      image: "https://images.unsplash.com/photo-1544967919-2f8e5e1b6c6e?w=600&h=600&fit=crop",
-      medium: "Acrylic on Canvas",
-      year: "2024",
-      series: "City Life",
-      description: "The interplay of light and shadow in metropolitan spaces.",
-      category: "acrylic",
-      featured: false
-    },
-    {
-      id: 3,
-      title: "Emotional Currents",
-      image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=600&h=600&fit=crop",
-      medium: "Mixed Media",
-      year: "2023",
-      series: "Inner Landscapes",
-      description: "An exploration of human emotion through abstract form and vibrant color.",
-      category: "mixed",
-      featured: true
-    },
-    {
-      id: 4,
-      title: "Serenity's Edge",
-      image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=600&h=600&fit=crop",
-      medium: "Watercolor",
-      year: "2023",
-      series: "Water Studies",
-      description: "The delicate balance between motion and stillness in aquatic environments.",
-      category: "watercolor",
-      featured: false
-    },
-    {
-      id: 5,
-      title: "Golden Hour Dreams",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=600&fit=crop",
-      medium: "Oil on Canvas",
-      year: "2024",
-      series: "Nature's Symphony",
-      description: "The warm embrace of evening light on pastoral landscapes.",
-      category: "oil",
-      featured: true
-    },
-    {
-      id: 6,
-      title: "Metamorphosis",
-      image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600&h=600&fit=crop",
-      medium: "Acrylic on Canvas",
-      year: "2023",
-      series: "Transformation",
-      description: "The beauty of change and growth captured in flowing forms.",
-      category: "acrylic",
-      featured: false
-    }
-  ];
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white pb-20 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading portfolio...</p>
+        </div>
+      </div>
+    );
+  }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-white pb-20 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Error loading portfolio: {error}</p>
+          <p className="text-gray-600">Please check your Sanity configuration.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Filter artworks based on selected filter
   const filteredItems = selectedFilter === 'all' 
-    ? portfolioItems 
+    ? artworks 
     : selectedFilter === 'featured'
-    ? portfolioItems.filter(item => item.featured)
-    : portfolioItems.filter(item => item.category === selectedFilter);
+    ? artworks.filter(item => item.featured)
+    : artworks.filter(item => item.medium?.toLowerCase().includes(selectedFilter));
 
-  const featuredWorks = portfolioItems.filter(item => item.featured);
+  const featuredWorks = artworks.filter(item => item.featured);
 
   return (
     <div className="min-h-screen bg-white pb-20">
@@ -111,28 +68,32 @@ const Portfolio = () => {
       </section>
 
       {/* Featured Works Carousel */}
-      <section className="px-6 py-8">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Featured Works</h2>
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {featuredWorks.map((work) => (
-            <Link key={work.id} to={`/artwork/${work.id}`} className="group flex-shrink-0">
-              <div className="w-64 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden group-hover:shadow-md transition-shadow">
-                <div 
-                  className="w-full h-48 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${work.image})` }}
-                ></div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
-                    {work.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-2">{work.medium}</p>
-                  <p className="text-xs text-gray-500 leading-relaxed">{work.description}</p>
+      {featuredWorks.length > 0 && (
+        <section className="px-6 py-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Featured Works</h2>
+          <div className="flex gap-4 overflow-x-auto pb-4">
+            {featuredWorks.map((work) => (
+              <Link key={work._id} to={`/artwork/${work.slug.current}`} className="group flex-shrink-0">
+                <div className="w-64 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden group-hover:shadow-md transition-shadow">
+                  {work.images && work.images[0] && (
+                    <div 
+                      className="w-full h-48 bg-cover bg-center"
+                      style={{ backgroundImage: `url(${urlFor(work.images[0]).width(400).url()})` }}
+                    ></div>
+                  )}
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
+                      {work.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-2">{work.medium}</p>
+                    <p className="text-xs text-gray-500 leading-relaxed">{work.description}</p>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Filter Tabs */}
       <section className="px-6">
@@ -155,19 +116,23 @@ const Portfolio = () => {
             {/* Portfolio Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredItems.map((item) => (
-                <Link key={item.id} to={`/artwork/${item.id}`} className="group">
+                <Link key={item._id} to={`/artwork/${item.slug.current}`} className="group">
                   <article className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden group-hover:shadow-md transition-all duration-300">
-                    <div 
-                      className="w-full h-64 bg-cover bg-center group-hover:scale-105 transition-transform duration-300"
-                      style={{ backgroundImage: `url(${item.image})` }}
-                    ></div>
+                    {item.images && item.images[0] && (
+                      <div 
+                        className="w-full h-64 bg-cover bg-center group-hover:scale-105 transition-transform duration-300"
+                        style={{ backgroundImage: `url(${urlFor(item.images[0]).width(600).url()})` }}
+                      ></div>
+                    )}
                     <div className="p-5">
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <h3 className="font-bold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
                             {item.title}
                           </h3>
-                          <p className="text-sm text-teal-600 font-medium">{item.series}</p>
+                          {item.series && (
+                            <p className="text-sm text-teal-600 font-medium">{item.series}</p>
+                          )}
                         </div>
                         <div className="flex items-center gap-1 text-xs text-gray-500">
                           <Calendar className="w-3 h-3" />
@@ -181,6 +146,12 @@ const Portfolio = () => {
                 </Link>
               ))}
             </div>
+
+            {filteredItems.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-500">No artworks found matching your criteria.</p>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </section>
