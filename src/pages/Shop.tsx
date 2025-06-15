@@ -26,7 +26,8 @@ const Shop = () => {
       date: "2024-01-15",
       medium: "Acrylic on Canvas",
       description: "Capturing the ethereal beauty of early morning light",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=500&fit=crop"
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=500&fit=crop",
+      featured: false
     },
     {
       id: 2,
@@ -37,7 +38,8 @@ const Shop = () => {
       date: "2024-02-10",
       medium: "Oil on Canvas",
       description: "The interplay of light and shadow in metropolitan spaces",
-      image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=500&fit=crop"
+      image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=500&fit=crop",
+      featured: true
     },
     {
       id: 3,
@@ -48,7 +50,8 @@ const Shop = () => {
       date: "2024-01-20",
       medium: "Watercolor on Paper",
       description: "An exploration of human emotion through abstract form",
-      image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=500&fit=crop"
+      image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=500&fit=crop",
+      featured: false
     },
     {
       id: 4,
@@ -59,7 +62,8 @@ const Shop = () => {
       date: "2024-03-05",
       medium: "Mixed Media",
       description: "The delicate balance between motion and stillness",
-      image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=400&h=500&fit=crop"
+      image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=400&h=500&fit=crop",
+      featured: true
     }
   ];
 
@@ -131,93 +135,112 @@ const Shop = () => {
 
   return (
     <div className="min-h-screen bg-white pb-20">
-      {/* Header */}
-      <header className="flex items-center p-6 bg-white border-b border-gray-100">
-        <Link to="/" className="mr-4">
-          <ArrowLeft className="w-6 h-6 text-gray-900" />
+      {/* Header - More compact for mobile */}
+      <header className="flex items-center p-4 bg-white border-b border-gray-100 sticky top-0 z-40">
+        <Link to="/" className="mr-3 p-2 -ml-2 rounded-full active:bg-gray-100 transition-colors">
+          <ArrowLeft className="w-5 h-5 text-gray-900" />
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Shop</h1>
+        <h1 className="text-xl font-bold text-gray-900">Shop</h1>
       </header>
 
-      {/* Search and Filters */}
-      <SearchAndFilters
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        filters={filters}
-        sortOptions={sortOptions}
-        sortBy={sortBy}
-        onSortChange={setSortBy}
-        resultsCount={filteredAndSortedArtworks.length}
-        showSocial={false}
-      />
+      {/* Search and Filters - Sticky */}
+      <div className="sticky top-16 z-30 bg-white">
+        <SearchAndFilters
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          filters={filters}
+          sortOptions={sortOptions}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          resultsCount={filteredAndSortedArtworks.length}
+          showSocial={false}
+        />
+      </div>
 
-      {/* Artworks Grid */}
-      <section className="px-6 py-6">
+      {/* Artworks Grid - Instagram-like layout */}
+      <section className="p-3">
         {isLoading ? (
           <ArtworkGridSkeleton count={6} columns={2} />
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-1">
               {filteredAndSortedArtworks.map((artwork) => (
-                <div key={artwork.id} className="group relative">
-                  <div className="bg-orange-50 rounded-lg shadow-sm group-hover:shadow-md transition-all duration-300 overflow-hidden">
-                    <Link to={`/artwork/${artwork.id}`} className="block">
-                      <div className="w-full h-48 overflow-hidden">
+                <div key={artwork.id} className="group relative aspect-square">
+                  <div className="bg-white rounded-none shadow-none group-hover:shadow-lg transition-all duration-300 overflow-hidden h-full">
+                    <Link to={`/artwork/${artwork.id}`} className="block h-full">
+                      <div className="w-full h-full relative overflow-hidden">
                         <LazyImage
                           src={artwork.image}
                           alt={artwork.title}
-                          className="w-full h-full group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
+                        
+                        {/* Instagram-like overlay */}
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-4 text-white">
+                            <div className="flex items-center gap-1">
+                              <Heart className="w-5 h-5" />
+                              <span className="text-sm font-medium">12</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Share2 className="w-5 h-5" />
+                              <span className="text-sm font-medium">3</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Action buttons - floating */}
+                        <div className="absolute top-2 right-2 flex flex-col gap-1">
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleHeartClick(artwork.id);
+                            }}
+                            className={`p-2 rounded-full backdrop-blur-sm transition-all duration-200 active:scale-95 ${
+                              likedItems.has(artwork.id) 
+                                ? 'bg-red-500 text-white shadow-lg' 
+                                : 'bg-white/80 text-gray-700 hover:bg-white hover:shadow-md'
+                            }`}
+                          >
+                            <Heart className={`w-4 h-4 ${likedItems.has(artwork.id) ? 'fill-current' : ''}`} />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleShare(artwork);
+                            }}
+                            className="p-2 rounded-full bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white hover:shadow-md transition-all duration-200 active:scale-95"
+                          >
+                            <Share2 className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        {/* Price tag */}
+                        <div className="absolute bottom-2 left-2">
+                          <div className="bg-black/70 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium">
+                            {artwork.price}
+                          </div>
+                        </div>
                       </div>
                     </Link>
-                    
-                    <div className="p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <Link to={`/artwork/${artwork.id}`}>
-                          <h3 className="font-medium text-gray-900 text-sm mb-1 group-hover:text-teal-700 transition-colors">
-                            {artwork.title}
-                          </h3>
-                        </Link>
-                        <button
-                          onClick={() => handleHeartClick(artwork.id)}
-                          className={`p-1 rounded-full transition-colors ${
-                            likedItems.has(artwork.id) 
-                              ? 'text-red-500' 
-                              : 'text-gray-400 hover:text-red-500'
-                          }`}
-                        >
-                          <Heart className={`w-4 h-4 ${likedItems.has(artwork.id) ? 'fill-current' : ''}`} />
-                        </button>
-                      </div>
-                      
-                      <p className="text-teal-600 font-semibold text-sm mb-1">{artwork.price}</p>
-                      <p className="text-xs text-gray-500 capitalize mb-2">{artwork.type}</p>
-                      
-                      <div className="flex items-center justify-between">
-                        <p className="text-xs text-gray-600 truncate flex-1">
-                          {artwork.description}
-                        </p>
-                        <button
-                          onClick={() => handleShare(artwork)}
-                          className="ml-2 p-1 text-gray-400 hover:text-gray-600 transition-colors"
-                        >
-                          <Share2 className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
                   </div>
                 </div>
               ))}
             </div>
 
+            {/* Enhanced empty state */}
             {filteredAndSortedArtworks.length === 0 && (
-              <div className="text-center py-12">
-                <div className="max-w-md mx-auto">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Search className="w-6 h-6 text-gray-400" />
+              <div className="text-center py-16 px-4">
+                <div className="max-w-sm mx-auto">
+                  <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Search className="w-8 h-8 text-gray-400" />
                   </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No artworks found</h3>
-                  <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No artworks found</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">
+                    Try adjusting your search terms or browse different categories to discover amazing artworks.
+                  </p>
                 </div>
               </div>
             )}

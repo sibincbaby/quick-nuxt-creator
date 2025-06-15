@@ -13,6 +13,7 @@ interface LazyImageProps {
 const LazyImage = ({ src, alt, className, style, onClick, placeholder }: LazyImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const imgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,19 +36,38 @@ const LazyImage = ({ src, alt, className, style, onClick, placeholder }: LazyIma
 
   const handleImageLoad = () => {
     setIsLoaded(true);
+    setHasError(false);
+  };
+
+  const handleImageError = () => {
+    setHasError(true);
+    setIsLoaded(false);
   };
 
   return (
     <div 
       ref={imgRef}
-      className={className}
+      className={`relative overflow-hidden ${className}`}
       style={style}
       onClick={onClick}
     >
-      {/* Skeleton Loader */}
-      {!isLoaded && (
-        <div className="w-full h-full bg-gray-200 animate-pulse rounded-lg flex items-center justify-center">
-          <div className="w-8 h-8 bg-gray-300 rounded"></div>
+      {/* Enhanced skeleton loader */}
+      {!isLoaded && !hasError && (
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shimmer_2s_infinite] -translate-x-full"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-8 h-8 bg-gray-300 rounded-lg animate-pulse"></div>
+          </div>
+        </div>
+      )}
+      
+      {/* Error state */}
+      {hasError && (
+        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-8 h-8 bg-gray-300 rounded-lg mx-auto mb-2"></div>
+            <p className="text-xs text-gray-500">Failed to load</p>
+          </div>
         </div>
       )}
       
@@ -56,11 +76,16 @@ const LazyImage = ({ src, alt, className, style, onClick, placeholder }: LazyIma
         <img
           src={src}
           alt={alt}
-          className={`w-full h-full object-cover transition-opacity duration-300 ${
-            isLoaded ? 'opacity-100' : 'opacity-0'
+          className={`w-full h-full object-cover transition-all duration-500 ${
+            isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-110'
           }`}
           onLoad={handleImageLoad}
-          style={{ position: isLoaded ? 'static' : 'absolute', top: 0, left: 0 }}
+          onError={handleImageError}
+          style={{ 
+            position: isLoaded ? 'static' : 'absolute', 
+            top: 0, 
+            left: 0 
+          }}
         />
       )}
     </div>
