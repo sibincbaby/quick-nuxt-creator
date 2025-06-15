@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import BottomNavigation from '../components/BottomNavigation';
@@ -9,13 +8,13 @@ const Index = () => {
       id: 1,
       title: "Whispers of the Wind",
       image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=500&fit=crop",
-      price: "$150"
+      price: "₹12,000"
     },
     {
       id: 2,
       title: "Serenity's Embrace",
       image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=500&fit=crop",
-      price: "$200"
+      price: "₹16,000"
     }
   ];
 
