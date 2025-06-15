@@ -114,7 +114,7 @@ const ArtworkDetail = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-3">
             <h2 className="text-lg font-bold text-gray-800">Description</h2>
-            <span className="text-sm font-semibold text-gray-600">{artwork.details.year}</span>
+            <span className="text-sm font-semibold text-gray-600">Year {artwork.details.year}</span>
           </div>
           <p className="text-gray-700 leading-relaxed">{artwork.longDescription}</p>
         </div>
