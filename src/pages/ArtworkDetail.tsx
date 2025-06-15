@@ -18,7 +18,7 @@ const artworkData = {
       size: "20 x 24 inches",
       medium: "Acrylic on Canvas",
       year: "2024",
-      price: "$1,200"
+      price: "₹95,000"
     }
   },
   2: {
@@ -31,7 +31,7 @@ const artworkData = {
       size: "30 x 40 inches",
       medium: "Oil on Canvas",
       year: "2024",
-      price: "$2,800"
+      price: "₹2,20,000"
     }
   },
   3: {
@@ -44,7 +44,7 @@ const artworkData = {
       size: "18 x 24 inches",
       medium: "Watercolor on Paper",
       year: "2024",
-      price: "$950"
+      price: "₹75,000"
     }
   },
   4: {
@@ -57,7 +57,7 @@ const artworkData = {
       size: "24 x 30 inches",
       medium: "Mixed Media",
       year: "2024",
-      price: "$1,650"
+      price: "₹1,30,000"
     }
   }
 };
