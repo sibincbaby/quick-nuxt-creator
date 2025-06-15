@@ -98,17 +98,17 @@ const ArtworkDetail = () => {
       <div className="px-6 py-6">
         {/* Compact Details Grid */}
         <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
-          <div className="text-center">
+          <div className="text-center min-h-[60px] flex flex-col justify-center">
             <div className="text-xs text-gray-600 uppercase tracking-wide mb-1 font-medium">Size</div>
-            <div className="font-semibold text-gray-800 text-sm">{artwork.details.size}</div>
+            <div className="font-semibold text-gray-800 text-sm leading-tight">{artwork.details.size}</div>
           </div>
-          <div className="text-center border-l border-r border-gray-200">
+          <div className="text-center border-l border-r border-gray-200 min-h-[60px] flex flex-col justify-center px-2">
             <div className="text-xs text-gray-600 uppercase tracking-wide mb-1 font-medium">Medium</div>
-            <div className="font-semibold text-gray-800 text-sm">{artwork.details.medium}</div>
+            <div className="font-semibold text-gray-800 text-sm leading-tight break-words">{artwork.details.medium}</div>
           </div>
-          <div className="text-center">
+          <div className="text-center min-h-[60px] flex flex-col justify-center">
             <div className="text-xs text-gray-600 uppercase tracking-wide mb-1 font-medium">Year</div>
-            <div className="font-semibold text-gray-800 text-sm">{artwork.details.year}</div>
+            <div className="font-semibold text-gray-800 text-sm leading-tight">{artwork.details.year}</div>
           </div>
         </div>
 
