@@ -1,12 +1,12 @@
-
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Share } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import BottomNavigation from '../components/BottomNavigation';
 import { useEffect } from 'react';
-
 const ArtworkDetail = () => {
-  const { id } = useParams();
+  const {
+    id
+  } = useParams();
 
   // Scroll to top when component mounts to focus on image
   useEffect(() => {
@@ -67,9 +67,7 @@ const ArtworkDetail = () => {
 
   // Get artwork data based on ID, fallback to first artwork if ID not found
   const artwork = artworkData[parseInt(id || '1') as keyof typeof artworkData] || artworkData[1];
-
-  return (
-    <div className="min-h-screen bg-white pb-32">
+  return <div className="min-h-screen bg-white pb-32">
       {/* Header with title overlay */}
       <header className="relative">
         <div className="absolute top-0 left-0 right-0 z-10 flex justify-between items-center p-4">
@@ -83,10 +81,9 @@ const ArtworkDetail = () => {
 
         {/* Artwork Image with title overlay */}
         <div className="relative h-96 overflow-hidden">
-          <div 
-            className="w-full h-full bg-cover bg-center"
-            style={{ backgroundImage: `url(${artwork.image})` }}
-          ></div>
+          <div className="w-full h-full bg-cover bg-center" style={{
+          backgroundImage: `url(${artwork.image})`
+        }}></div>
           
           {/* Title overlay at bottom */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 pt-12">
@@ -125,7 +122,7 @@ const ArtworkDetail = () => {
       </div>
 
       {/* Sticky Action Buttons */}
-      <div className="fixed bottom-20 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg">
+      <div className="fixed bottom-20 left-0 right-0 bg-white  p-4 shadow-lg">
         <div className="flex gap-3 max-w-md mx-auto">
           <Button className="flex-1 bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 rounded-lg">
             Buy Now
@@ -137,8 +134,6 @@ const ArtworkDetail = () => {
       </div>
 
       <BottomNavigation />
-    </div>
-  );
+    </div>;
 };
-
 export default ArtworkDetail;
