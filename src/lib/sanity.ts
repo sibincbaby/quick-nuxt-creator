@@ -3,10 +3,11 @@ import { createClient } from '@sanity/client'
 import imageUrlBuilder from '@sanity/image-url'
 
 export const sanityClient = createClient({
-  projectId: '90ptohp5',
-  dataset: 'production',
+  projectId: import.meta.env.VITE_SANITY_PROJECT_ID || '90ptohp5',
+  dataset: import.meta.env.VITE_SANITY_DATASET || 'production',
   apiVersion: '2024-03-01',
   useCdn: false,
+  token: import.meta.env.VITE_SANITY_API_TOKEN,
 })
 
 const builder = imageUrlBuilder(sanityClient)
