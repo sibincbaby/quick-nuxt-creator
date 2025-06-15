@@ -157,74 +157,115 @@ const Shop = () => {
         />
       </div>
 
-      {/* Artworks Grid - Instagram-like layout */}
+      {/* Artworks Grid - Instagram-like layout with details */}
       <section className="p-3">
         {isLoading ? (
           <ArtworkGridSkeleton count={6} columns={2} />
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-1">
+            <div className="grid grid-cols-1 gap-4">
               {filteredAndSortedArtworks.map((artwork) => (
-                <div key={artwork.id} className="group relative aspect-square">
-                  <div className="bg-white rounded-none shadow-none group-hover:shadow-lg transition-all duration-300 overflow-hidden h-full">
+                <div key={artwork.id} className="group relative bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                  {/* Image Section */}
+                  <div className="relative aspect-square">
                     <Link to={`/artwork/${artwork.id}`} className="block h-full">
-                      <div className="w-full h-full relative overflow-hidden">
-                        <LazyImage
-                          src={artwork.image}
-                          alt={artwork.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                        
-                        {/* Instagram-like overlay */}
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-4 text-white">
-                            <div className="flex items-center gap-1">
-                              <Heart className="w-5 h-5" />
-                              <span className="text-sm font-medium">12</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Share2 className="w-5 h-5" />
-                              <span className="text-sm font-medium">3</span>
-                            </div>
+                      <LazyImage
+                        src={artwork.image}
+                        alt={artwork.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      
+                      {/* Instagram-like overlay on hover */}
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-4 text-white">
+                          <div className="flex items-center gap-1">
+                            <Heart className="w-5 h-5" />
+                            <span className="text-sm font-medium">12</span>
                           </div>
-                        </div>
-                        
-                        {/* Action buttons - floating */}
-                        <div className="absolute top-2 right-2 flex flex-col gap-1">
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              handleHeartClick(artwork.id);
-                            }}
-                            className={`p-2 rounded-full backdrop-blur-sm transition-all duration-200 active:scale-95 ${
-                              likedItems.has(artwork.id) 
-                                ? 'bg-red-500 text-white shadow-lg' 
-                                : 'bg-white/80 text-gray-700 hover:bg-white hover:shadow-md'
-                            }`}
-                          >
-                            <Heart className={`w-4 h-4 ${likedItems.has(artwork.id) ? 'fill-current' : ''}`} />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              handleShare(artwork);
-                            }}
-                            className="p-2 rounded-full bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white hover:shadow-md transition-all duration-200 active:scale-95"
-                          >
-                            <Share2 className="w-4 h-4" />
-                          </button>
-                        </div>
-
-                        {/* Price tag */}
-                        <div className="absolute bottom-2 left-2">
-                          <div className="bg-black/70 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium">
-                            {artwork.price}
+                          <div className="flex items-center gap-1">
+                            <Share2 className="w-5 h-5" />
+                            <span className="text-sm font-medium">3</span>
                           </div>
                         </div>
                       </div>
+                      
+                      {/* Action buttons - floating */}
+                      <div className="absolute top-3 right-3 flex flex-col gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleHeartClick(artwork.id);
+                          }}
+                          className={`p-2.5 rounded-full backdrop-blur-sm transition-all duration-200 active:scale-95 shadow-sm ${
+                            likedItems.has(artwork.id) 
+                              ? 'bg-red-500 text-white' 
+                              : 'bg-white/90 text-gray-700 hover:bg-white'
+                          }`}
+                        >
+                          <Heart className={`w-4 h-4 ${likedItems.has(artwork.id) ? 'fill-current' : ''}`} />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleShare(artwork);
+                          }}
+                          className="p-2.5 rounded-full bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white transition-all duration-200 active:scale-95 shadow-sm"
+                        >
+                          <Share2 className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {/* Price tag */}
+                      <div className="absolute bottom-3 left-3">
+                        <div className="bg-black/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-semibold">
+                          {artwork.price}
+                        </div>
+                      </div>
                     </Link>
+                  </div>
+
+                  {/* Details Section */}
+                  <div className="p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <Link to={`/artwork/${artwork.id}`}>
+                          <h3 className="font-bold text-gray-900 text-lg mb-1 group-hover:text-teal-700 transition-colors line-clamp-1">
+                            {artwork.title}
+                          </h3>
+                        </Link>
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800 capitalize">
+                            {artwork.type}
+                          </span>
+                          <span className="text-sm text-gray-600">{artwork.medium}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-700 leading-relaxed line-clamp-2">
+                      {artwork.description}
+                    </p>
+                    
+                    {/* Action row */}
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                      <div className="flex items-center gap-4 text-gray-500">
+                        <button className="flex items-center gap-1 text-sm hover:text-red-500 transition-colors">
+                          <Heart className="w-4 h-4" />
+                          <span>12</span>
+                        </button>
+                        <button className="flex items-center gap-1 text-sm hover:text-gray-700 transition-colors">
+                          <Share2 className="w-4 h-4" />
+                          <span>Share</span>
+                        </button>
+                      </div>
+                      <Link 
+                        to={`/artwork/${artwork.id}`}
+                        className="text-sm font-medium text-teal-600 hover:text-teal-700 transition-colors"
+                      >
+                        View Details
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ))}

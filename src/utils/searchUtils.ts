@@ -3,7 +3,7 @@ interface SearchableItem {
   id: number;
   title: string;
   description?: string;
-  medium?: string;
+  medium: string;
   category?: string;
   series?: string;
   year?: string;
