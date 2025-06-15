@@ -76,7 +76,7 @@ const ArtworkDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-screen bg-white pb-32">
       {/* Header with title overlay */}
       <header className="relative">
         <div className="absolute top-0 left-0 right-0 z-10 flex justify-between items-center p-4">
@@ -154,8 +154,8 @@ const ArtworkDetail = () => {
         <div className="h-20"></div>
       </div>
 
-      {/* Sticky Action Buttons */}
-      <div className="fixed bottom-20 left-0 right-0 bg-white px-4 py-2">
+      {/* Sticky Action Buttons - No gap with bottom nav */}
+      <div className="fixed bottom-16 left-0 right-0 bg-white px-4 py-3 border-t border-gray-100">
         <div className="flex gap-3 max-w-md mx-auto">
           <Button className="flex-1 bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 rounded-lg">
             Buy Now
