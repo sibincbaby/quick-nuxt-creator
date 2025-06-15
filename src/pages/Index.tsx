@@ -1,5 +1,6 @@
+
 import { Link } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
 import BottomNavigation from '../components/BottomNavigation';
 
 const Index = () => {
@@ -52,7 +53,16 @@ const Index = () => {
 
       {/* Featured Artworks */}
       <section className="px-6 mb-12">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Featured Artworks</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold text-gray-900">Featured Artworks</h2>
+          <Link 
+            to="/portfolio" 
+            className="flex items-center text-teal-600 text-sm font-medium hover:text-teal-700 transition-colors"
+          >
+            View Full Portfolio
+            <ArrowRight className="w-4 h-4 ml-1" />
+          </Link>
+        </div>
         <div className="grid grid-cols-2 gap-4">
           {featuredArtworks.map((artwork) => (
             <Link 
