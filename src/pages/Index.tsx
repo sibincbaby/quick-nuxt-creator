@@ -8,13 +8,15 @@ const Index = () => {
       id: 1,
       title: "Whispers of the Wind",
       image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=500&fit=crop",
-      price: "₹12,000"
+      price: "₹12,000",
+      type: "acrylic"
     },
     {
       id: 2,
       title: "Serenity's Embrace",
       image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=500&fit=crop",
-      price: "₹16,000"
+      price: "₹16,000",
+      type: "oil"
     }
   ];
 
@@ -64,7 +66,8 @@ const Index = () => {
                   style={{ backgroundImage: `url(${artwork.image})` }}
                 ></div>
                 <h3 className="font-medium text-gray-900 text-sm mb-1">{artwork.title}</h3>
-                <p className="text-gray-600 text-sm">{artwork.price}</p>
+                <p className="text-teal-600 font-semibold text-sm mb-1">{artwork.price}</p>
+                <p className="text-xs text-gray-500 capitalize">{artwork.type}</p>
               </div>
             </Link>
           ))}
