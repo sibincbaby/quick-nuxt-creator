@@ -1,3 +1,4 @@
+
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Share } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -96,19 +97,19 @@ const ArtworkDetail = () => {
 
       {/* Content */}
       <div className="px-6 py-6">
-        {/* Compact Details Grid */}
-        <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
-          <div className="text-center min-h-[60px] flex flex-col justify-center">
-            <div className="text-xs text-gray-600 uppercase tracking-wide mb-1 font-medium">Size</div>
-            <div className="font-semibold text-gray-800 text-sm leading-tight">{artwork.details.size}</div>
+        {/* Mobile-Friendly Details Cards */}
+        <div className="space-y-3 mb-6">
+          <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+            <span className="text-sm font-medium text-gray-600">Size</span>
+            <span className="text-sm font-semibold text-gray-800">{artwork.details.size}</span>
           </div>
-          <div className="text-center border-l border-r border-gray-200 min-h-[60px] flex flex-col justify-center px-2">
-            <div className="text-xs text-gray-600 uppercase tracking-wide mb-1 font-medium">Medium</div>
-            <div className="font-semibold text-gray-800 text-sm leading-tight break-words">{artwork.details.medium}</div>
+          <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+            <span className="text-sm font-medium text-gray-600">Medium</span>
+            <span className="text-sm font-semibold text-gray-800 text-right">{artwork.details.medium}</span>
           </div>
-          <div className="text-center min-h-[60px] flex flex-col justify-center">
-            <div className="text-xs text-gray-600 uppercase tracking-wide mb-1 font-medium">Year</div>
-            <div className="font-semibold text-gray-800 text-sm leading-tight">{artwork.details.year}</div>
+          <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+            <span className="text-sm font-medium text-gray-600">Year</span>
+            <span className="text-sm font-semibold text-gray-800">{artwork.details.year}</span>
           </div>
         </div>
 
