@@ -6,59 +6,51 @@ import BottomNavigation from '../components/BottomNavigation';
 import { useEffect, useState } from 'react';
 import { shareArtwork, getShareableData } from '../utils/socialShare';
 
-// Mock data for different artworks - in real app this would come from an API
+// Simple artwork data matching the shop page format
 const artworkData = {
   1: {
     id: 1,
     title: "Whispers of Dawn",
+    price: "₹12,000",
     image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
     description: "Capturing the ethereal beauty of early morning light filtering through ancient trees.",
     longDescription: "This acrylic painting explores the gentle transition from night to day, capturing the soft, ethereal light that filters through morning mist. The artist's use of layered acrylics creates depth and movement, inviting viewers to feel the peaceful serenity of dawn.",
-    details: {
-      size: "20 x 24 inches",
-      medium: "Acrylic on Canvas",
-      year: "2024",
-      price: "₹95,000"
-    }
+    size: "20 x 24 inches",
+    medium: "Acrylic on Canvas",
+    year: "2024"
   },
   2: {
     id: 2,
     title: "Urban Reflections",
+    price: "₹16,000",
     image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&h=600&fit=crop",
     description: "The interplay of light and shadow in metropolitan spaces, captured through bold artistic expression.",
     longDescription: "This oil painting represents the artist's exploration of urban life and the complex interplay of light and shadow in metropolitan environments. The careful balance of warm and cool tones creates a sense of movement and energy that speaks to the viewer's experience of city life.",
-    details: {
-      size: "30 x 40 inches",
-      medium: "Oil on Canvas",
-      year: "2024",
-      price: "₹2,20,000"
-    }
+    size: "30 x 40 inches",
+    medium: "Oil on Canvas",
+    year: "2024"
   },
   3: {
     id: 3,
     title: "Emotional Currents",
+    price: "₹4,000",
     image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=600&fit=crop",
     description: "An exploration of human emotion through abstract form and vibrant color.",
     longDescription: "This watercolor artwork delves into the complexity of human emotions, using flowing forms and vibrant colors to represent the different layers of feeling we experience. The fluid nature of watercolor perfectly captures the ever-changing nature of our emotional landscape.",
-    details: {
-      size: "18 x 24 inches",
-      medium: "Watercolor on Paper",
-      year: "2024",
-      price: "₹75,000"
-    }
+    size: "18 x 24 inches",
+    medium: "Watercolor on Paper",
+    year: "2024"
   },
   4: {
     id: 4,
     title: "Serenity's Edge",
+    price: "₹4,800",
     image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&h=600&fit=crop",
     description: "The delicate balance between motion and stillness in natural environments.",
     longDescription: "This mixed media artwork explores the peaceful moments found in nature's constant movement. Through a combination of different materials and techniques, the artist creates a sense of calm that exists at the edge of motion, capturing those fleeting moments of perfect balance.",
-    details: {
-      size: "24 x 30 inches",
-      medium: "Mixed Media",
-      year: "2024",
-      price: "₹1,30,000"
-    }
+    size: "24 x 30 inches",
+    medium: "Mixed Media",
+    year: "2024"
   }
 };
 
@@ -74,11 +66,6 @@ const ArtworkDetail = () => {
   // Get artwork data based on ID, fallback to first artwork if ID not found
   const artworkId = parseInt(id || '1');
   const artwork = artworkData[artworkId as keyof typeof artworkData] || artworkData[1];
-
-  console.log('Current ID from URL:', id);
-  console.log('Parsed artwork ID:', artworkId);
-  console.log('Selected artwork:', artwork);
-  console.log('Artwork price:', artwork.details.price);
 
   const handleShare = async () => {
     const shareData = getShareableData(artwork);
@@ -120,7 +107,7 @@ const ArtworkDetail = () => {
       <div className="px-6 py-6">
         {/* Price and Action Buttons */}
         <div className="flex items-center justify-between mb-6">
-          <div className="text-2xl font-bold text-gray-900">{artwork.details.price}</div>
+          <div className="text-2xl font-bold text-gray-900">{artwork.price}</div>
           <div className="flex gap-2">
             <button 
               onClick={handleLove}
@@ -143,11 +130,11 @@ const ArtworkDetail = () => {
 
         {/* Compact Details */}
         <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-6">
-          <span>{artwork.details.size}</span>
+          <span>{artwork.size}</span>
           <span>•</span>
-          <span>{artwork.details.medium}</span>
+          <span>{artwork.medium}</span>
           <span>•</span>
-          <span>Year: {artwork.details.year}</span>
+          <span>Year: {artwork.year}</span>
         </div>
 
         {/* Description */}
