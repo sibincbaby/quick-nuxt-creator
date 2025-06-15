@@ -6,7 +6,7 @@ interface SearchableItem {
   medium: string;
   category?: string;
   series?: string;
-  year: string;
+  year?: string;
   image: string;
   featured: boolean;
   price?: string;
@@ -21,14 +21,14 @@ export const fuzzySearch = (items: SearchableItem[], searchTerm: string): Search
   const term = searchTerm.toLowerCase().trim();
   
   return items.filter(item => {
-    // Search in multiple fields
+    // Search in multiple fields, handling optional properties
     const searchFields = [
       item.title,
       item.description,
       item.medium,
       item.category,
       item.series,
-      item.year
+      item.year || item.date
     ].filter(Boolean).join(' ').toLowerCase();
 
     // Simple fuzzy matching - checks if all words in search term exist

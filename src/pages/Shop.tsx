@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Heart, Share2, Search } from 'lucide-react';
@@ -15,7 +16,7 @@ const Shop = () => {
   const [likedItems, setLikedItems] = useState<Set<number>>(new Set());
   const [isLoading, setIsLoading] = useState(false);
 
-  const artworks = [
+  const rawArtworks = [
     {
       id: 1,
       title: "Whispers of Dawn",
@@ -65,6 +66,12 @@ const Shop = () => {
       featured: true
     }
   ];
+
+  // Transform artworks to include year for SearchableItem compatibility
+  const artworks = rawArtworks.map(artwork => ({
+    ...artwork,
+    year: new Date(artwork.date).getFullYear().toString()
+  }));
 
   const typeCounts = useMemo(() => getFilterCounts(artworks, 'type'), [artworks]);
 
