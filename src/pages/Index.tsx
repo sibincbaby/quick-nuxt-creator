@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import BottomNavigation from '../components/BottomNavigation';
+import LazyImage from '../components/LazyImage';
 
 const Index = () => {
   const featuredArtworks = [
@@ -69,10 +70,13 @@ const Index = () => {
               className="group"
             >
               <div className="bg-orange-50 rounded-lg p-4 shadow-sm group-hover:shadow-md transition-shadow">
-                <div 
-                  className="w-full h-48 rounded-lg bg-cover bg-center mb-3"
-                  style={{ backgroundImage: `url(${artwork.image})` }}
-                ></div>
+                <div className="w-full h-48 rounded-lg mb-3 overflow-hidden">
+                  <LazyImage
+                    src={artwork.image}
+                    alt={artwork.title}
+                    className="w-full h-full"
+                  />
+                </div>
                 <h3 className="font-medium text-gray-900 text-sm mb-1">{artwork.title}</h3>
                 <p className="text-teal-600 font-semibold text-sm mb-1">{artwork.price}</p>
                 <p className="text-xs text-gray-500 capitalize">{artwork.type}</p>
@@ -92,10 +96,13 @@ const Index = () => {
               to={`/blog/${post.id}`}
               className="flex gap-4 group"
             >
-              <div 
-                className="w-20 h-20 rounded-lg bg-cover bg-center flex-shrink-0"
-                style={{ backgroundImage: `url(${post.image})` }}
-              ></div>
+              <div className="w-20 h-20 rounded-lg flex-shrink-0 overflow-hidden">
+                <LazyImage
+                  src={post.image}
+                  alt={post.title}
+                  className="w-full h-full"
+                />
+              </div>
               <div className="flex-1">
                 <p className="text-teal-600 text-sm font-medium mb-1">{post.category}</p>
                 <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-teal-700 transition-colors">

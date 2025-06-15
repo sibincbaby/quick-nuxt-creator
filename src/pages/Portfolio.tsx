@@ -1,12 +1,19 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, Palette } from 'lucide-react';
 import BottomNavigation from '../components/BottomNavigation';
+import Lightbox from '../components/Lightbox';
+import LazyImage from '../components/LazyImage';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 const Portfolio = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<{
+    src: string;
+    alt: string;
+    title: string;
+  } | null>(null);
 
   const portfolioItems = [
     {
@@ -85,6 +92,15 @@ const Portfolio = () => {
 
   const featuredWorks = portfolioItems.filter(item => item.featured);
 
+  const openLightbox = (item: typeof portfolioItems[0]) => {
+    setSelectedImage({
+      src: item.image,
+      alt: item.title,
+      title: item.title
+    });
+    setLightboxOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-white pb-20">
       {/* Header */}
@@ -115,21 +131,26 @@ const Portfolio = () => {
         <h2 className="text-xl font-bold text-gray-900 mb-6">Featured Works</h2>
         <div className="flex gap-4 overflow-x-auto pb-4">
           {featuredWorks.map((work) => (
-            <Link key={work.id} to={`/artwork/${work.id}`} className="group flex-shrink-0">
+            <div key={work.id} className="group flex-shrink-0">
               <div className="w-64 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden group-hover:shadow-md transition-shadow">
-                <div 
-                  className="w-full h-48 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${work.image})` }}
-                ></div>
+                <div className="w-full h-48 cursor-pointer" onClick={() => openLightbox(work)}>
+                  <LazyImage
+                    src={work.image}
+                    alt={work.title}
+                    className="w-full h-full"
+                  />
+                </div>
                 <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
-                    {work.title}
-                  </h3>
+                  <Link to={`/artwork/${work.id}`}>
+                    <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
+                      {work.title}
+                    </h3>
+                  </Link>
                   <p className="text-sm text-gray-600 mb-2">{work.medium}</p>
                   <p className="text-xs text-gray-500 leading-relaxed">{work.description}</p>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </section>
@@ -155,18 +176,26 @@ const Portfolio = () => {
             {/* Portfolio Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredItems.map((item) => (
-                <Link key={item.id} to={`/artwork/${item.id}`} className="group">
+                <div key={item.id} className="group">
                   <article className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden group-hover:shadow-md transition-all duration-300">
                     <div 
-                      className="w-full h-64 bg-cover bg-center group-hover:scale-105 transition-transform duration-300"
-                      style={{ backgroundImage: `url(${item.image})` }}
-                    ></div>
+                      className="w-full h-64 cursor-pointer group-hover:scale-105 transition-transform duration-300 overflow-hidden"
+                      onClick={() => openLightbox(item)}
+                    >
+                      <LazyImage
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full"
+                      />
+                    </div>
                     <div className="p-5">
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
-                            {item.title}
-                          </h3>
+                          <Link to={`/artwork/${item.id}`}>
+                            <h3 className="font-bold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
+                              {item.title}
+                            </h3>
+                          </Link>
                           <p className="text-sm text-teal-600 font-medium">{item.series}</p>
                         </div>
                         <div className="flex items-center gap-1 text-xs text-gray-500">
@@ -178,12 +207,21 @@ const Portfolio = () => {
                       <p className="text-sm text-gray-700 leading-relaxed">{item.description}</p>
                     </div>
                   </article>
-                </Link>
+                </div>
               ))}
             </div>
           </TabsContent>
         </Tabs>
       </section>
+
+      {/* Lightbox */}
+      <Lightbox
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        imageSrc={selectedImage?.src || ''}
+        imageAlt={selectedImage?.alt || ''}
+        title={selectedImage?.title}
+      />
 
       <BottomNavigation />
     </div>
