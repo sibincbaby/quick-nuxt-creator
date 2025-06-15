@@ -155,7 +155,7 @@ const ArtworkDetail = () => {
       </div>
 
       {/* Sticky Action Buttons - No border, just padding */}
-      <div className="fixed bottom-16 left-0 right-0 bg-white px-4 py-4">
+      <div className="fixed bottom-16 left-0 right-0 bg-white px-4 pt-3 pb-4">
         <div className="flex gap-3 max-w-md mx-auto">
           <Button className="flex-1 bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 rounded-lg">
             Buy Now
