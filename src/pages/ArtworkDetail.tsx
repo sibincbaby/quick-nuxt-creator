@@ -1,9 +1,10 @@
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Heart, Share } from 'lucide-react';
+import { ArrowLeft, Heart, Share, ZoomIn } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import BottomNavigation from '../components/BottomNavigation';
 import { useEffect, useState } from 'react';
 import { shareArtwork, getShareableData } from '../utils/socialShare';
+import Lightbox from '../components/Lightbox';
 
 // Simple artwork data matching the shop page format
 const artworkData = {
@@ -56,6 +57,7 @@ const artworkData = {
 const ArtworkDetail = () => {
   const { id } = useParams();
   const [isLoved, setIsLoved] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   // Scroll to top when component mounts to focus on image
   useEffect(() => {
@@ -75,6 +77,14 @@ const ArtworkDetail = () => {
     setIsLoved(!isLoved);
   };
 
+  const handleImageClick = () => {
+    setIsLightboxOpen(true);
+  };
+
+  const handleCloseLightbox = () => {
+    setIsLightboxOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-white pb-32">
       {/* Header with title overlay */}
@@ -83,10 +93,17 @@ const ArtworkDetail = () => {
           <Link to="/shop" className="p-2 bg-black/20 backdrop-blur-sm rounded-full">
             <ArrowLeft className="w-6 h-6 text-white" />
           </Link>
+          <button 
+            onClick={handleImageClick}
+            className="p-2 bg-black/20 backdrop-blur-sm rounded-full hover:bg-black/30 transition-colors"
+            title="View fullscreen"
+          >
+            <ZoomIn className="w-6 h-6 text-white" />
+          </button>
         </div>
 
         {/* Artwork Image with title overlay and smooth transition */}
-        <div className="relative h-96 overflow-hidden">
+        <div className="relative h-96 overflow-hidden cursor-pointer" onClick={handleImageClick}>
           <div 
             className="w-full h-full bg-cover bg-center transition-all duration-700 ease-out" 
             style={{
@@ -164,6 +181,15 @@ const ArtworkDetail = () => {
       </div>
 
       <BottomNavigation />
+
+      {/* Lightbox for fullscreen image viewing */}
+      <Lightbox
+        isOpen={isLightboxOpen}
+        onClose={handleCloseLightbox}
+        imageSrc={artwork.image}
+        imageAlt={artwork.title}
+        title={artwork.title}
+      />
     </div>
   );
 };
