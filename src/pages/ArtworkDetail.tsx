@@ -1,4 +1,5 @@
 
+
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Share } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -107,15 +108,14 @@ const ArtworkDetail = () => {
             <span className="text-sm font-medium text-gray-600">Medium</span>
             <span className="text-sm font-semibold text-gray-800 text-right">{artwork.details.medium}</span>
           </div>
-          <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-            <span className="text-sm font-medium text-gray-600">Year</span>
-            <span className="text-sm font-semibold text-gray-800">{artwork.details.year}</span>
-          </div>
         </div>
 
         {/* Description */}
         <div className="mb-8">
-          <h2 className="text-lg font-bold text-gray-800 mb-3">About This Artwork</h2>
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-lg font-bold text-gray-800">Description</h2>
+            <span className="text-sm font-semibold text-gray-600">{artwork.details.year}</span>
+          </div>
           <p className="text-gray-700 leading-relaxed">{artwork.longDescription}</p>
         </div>
 
@@ -140,3 +140,4 @@ const ArtworkDetail = () => {
 };
 
 export default ArtworkDetail;
+
