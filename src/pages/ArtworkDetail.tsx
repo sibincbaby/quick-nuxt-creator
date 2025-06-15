@@ -1,3 +1,4 @@
+
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Share } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -98,24 +99,24 @@ const ArtworkDetail = () => {
       {/* Content */}
       <div className="px-6 py-6">
         {/* Compact Details Grid */}
-        <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+        <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-teal-50 rounded-lg border border-teal-200">
           <div className="text-center">
-            <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Size</div>
-            <div className="font-medium text-gray-900 text-sm">{artwork.details.size}</div>
+            <div className="text-xs text-teal-600 uppercase tracking-wide mb-1 font-medium">Size</div>
+            <div className="font-semibold text-teal-800 text-sm">{artwork.details.size}</div>
           </div>
-          <div className="text-center border-l border-r border-gray-200">
-            <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Medium</div>
-            <div className="font-medium text-gray-900 text-sm">{artwork.details.medium}</div>
+          <div className="text-center border-l border-r border-teal-200">
+            <div className="text-xs text-teal-600 uppercase tracking-wide mb-1 font-medium">Medium</div>
+            <div className="font-semibold text-teal-800 text-sm">{artwork.details.medium}</div>
           </div>
           <div className="text-center">
-            <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Year</div>
-            <div className="font-medium text-gray-900 text-sm">{artwork.details.year}</div>
+            <div className="text-xs text-teal-600 uppercase tracking-wide mb-1 font-medium">Year</div>
+            <div className="font-semibold text-teal-800 text-sm">{artwork.details.year}</div>
           </div>
         </div>
 
         {/* Description */}
         <div className="mb-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">About This Artwork</h2>
+          <h2 className="text-lg font-bold text-teal-800 mb-3">About This Artwork</h2>
           <p className="text-gray-700 leading-relaxed">{artwork.longDescription}</p>
         </div>
 
