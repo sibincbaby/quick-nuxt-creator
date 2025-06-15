@@ -1,3 +1,4 @@
+
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Share } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -68,7 +69,7 @@ const ArtworkDetail = () => {
 
   // Get artwork data based on ID, fallback to first artwork if ID not found
   const artwork = artworkData[parseInt(id || '1') as keyof typeof artworkData] || artworkData[1];
-  return <div className="min-h-screen bg-white pb-32">
+  return <div className="min-h-screen bg-white pb-20">
       {/* Header with title overlay */}
       <header className="relative">
         <div className="absolute top-0 left-0 right-0 z-10 flex justify-between items-center p-4">
@@ -97,7 +98,7 @@ const ArtworkDetail = () => {
       {/* Content */}
       <div className="px-6 py-6">
         {/* Compact Details Grid */}
-        <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-teal-50 rounded-lg border border-teal-200">
+        <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-teal-50 rounded-lg">
           <div className="text-center">
             <div className="text-xs text-teal-600 uppercase tracking-wide mb-1 font-medium">Size</div>
             <div className="font-semibold text-teal-800 text-sm">{artwork.details.size}</div>
@@ -123,7 +124,7 @@ const ArtworkDetail = () => {
       </div>
 
       {/* Sticky Action Buttons */}
-      <div className="fixed bottom-20 left-0 right-0 bg-white p-4">
+      <div className="fixed bottom-16 left-0 right-0 bg-white px-4 py-2">
         <div className="flex gap-3 max-w-md mx-auto">
           <Button className="flex-1 bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 rounded-lg">
             Buy Now
