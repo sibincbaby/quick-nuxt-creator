@@ -11,10 +11,10 @@ import { getImageUrl } from '../lib/sanity';
 const Profile = () => {
   const [artistProfile, setArtistProfile] = useState<ArtistProfile | null>(null);
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const [loading, setLoading] = useState(true);
   const { generalContact } = useWhatsApp();
 
   useEffect(() => {
+    // Load data in background without blocking UI
     const loadData = async () => {
       try {
         const [profile, settings] = await Promise.all([
@@ -25,8 +25,6 @@ const Profile = () => {
         setSiteSettings(settings);
       } catch (error) {
         console.error('Error loading data:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -70,31 +68,20 @@ const Profile = () => {
   const profile = artistProfile || fallbackData;
   const whatsappNumber = siteSettings?.whatsappNumber || fallbackData.whatsappNumber;
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-white pb-20">
-      {/* Header */}
-      <header className="flex items-center p-6 bg-white">
-        <Link to="/" className="mr-4">
-          <ArrowLeft className="w-6 h-6 text-gray-900" />
+      {/* Header - Match Shop page style */}
+      <header className="flex items-center p-4 bg-white border-b border-gray-100">
+        <Link to="/" className="mr-3 p-2 -ml-2 rounded-full active:bg-gray-100 transition-colors">
+          <ArrowLeft className="w-5 h-5 text-gray-900" />
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Contact</h1>
+        <h1 className="text-xl font-bold text-gray-900">Contact</h1>
       </header>
 
       {/* Artist Profile Section */}
-      <div className="px-6 mb-8">
-        <div className="text-center mb-6">
-          <div className="w-32 h-32 bg-gradient-to-br from-orange-200 to-orange-300 rounded-full mx-auto mb-4 flex items-center justify-center overflow-hidden">
+      <div className="px-6 mb-8 mt-6">
+        <div className="text-center mb-8">
+          <div className="w-32 h-32 bg-gradient-to-br from-orange-400 via-orange-300 to-blue-400 rounded-full mx-auto mb-4 flex items-center justify-center overflow-hidden shadow-sm">
             {artistProfile?.profileImage ? (
               <img 
                 src={getImageUrl(artistProfile.profileImage, 128, 128)} 
@@ -102,22 +89,22 @@ const Profile = () => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-28 h-28 bg-orange-400 rounded-full flex items-center justify-center">
+              <div className="w-28 h-28 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-2xl font-bold">
                   {profile.name.split(' ').map(n => n[0]).join('')}
                 </span>
               </div>
             )}
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{profile.name}</h2>
-          <p className="text-gray-600 leading-relaxed">{profile.bio}</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">{profile.name}</h2>
+          <p className="text-gray-600 leading-relaxed max-w-md mx-auto">{profile.bio}</p>
         </div>
 
-        {/* Artist Statement */}
+        {/* Studio Hours Card */}
         {(artistProfile?.artistStatement || profile.workingHours) && (
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-gray-900 mb-2">Studio Hours</h3>
-            <p className="text-gray-600 text-sm whitespace-pre-line">
+          <div className="bg-white rounded-lg p-5 mb-6 border border-gray-100 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Studio Hours</h3>
+            <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">
               {artistProfile?.workingHours || profile.workingHours}
             </p>
           </div>
@@ -126,52 +113,53 @@ const Profile = () => {
 
       {/* Contact Methods */}
       <div className="px-6 mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Get in Touch</h3>
-        <div className="space-y-3">
-          {/* WhatsApp Contact */}
-          <Button
+        <h3 className="text-xl font-bold text-gray-900 mb-6">Get in Touch</h3>
+        <div className="space-y-4">
+          {/* WhatsApp Contact - Primary CTA */}
+          <button
             onClick={handleWhatsAppContact}
-            className="w-full flex items-center justify-start bg-green-500 hover:bg-green-600 text-white"
+            className="w-full flex items-center p-4 bg-teal-600 hover:bg-teal-700 text-white rounded-lg shadow-sm transition-all duration-200 hover:shadow-md"
           >
-            <MessageCircle className="w-5 h-5 mr-3" />
-            <div className="text-left">
-              <div className="font-medium">WhatsApp</div>
+            <MessageCircle className="w-6 h-6 mr-4" />
+            <div className="text-left flex-1">
+              <div className="font-semibold text-lg">WhatsApp</div>
               <div className="text-sm opacity-90">Quick response guaranteed</div>
             </div>
-          </Button>
+          </button>
 
-          {/* Email Contact */}
-          <Button
-            onClick={handleEmailContact}
-            variant="outline"
-            className="w-full flex items-center justify-start"
-          >
-            <Mail className="w-5 h-5 mr-3 text-gray-600" />
-            <div className="text-left">
-              <div className="font-medium text-gray-900">{profile.email}</div>
-              <div className="text-sm text-gray-500">Send an email</div>
-            </div>
-          </Button>
+          {/* Contact Cards */}
+          <div className="grid gap-4">
+            {/* Email Contact */}
+            <button
+              onClick={handleEmailContact}
+              className="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:border-teal-300 hover:bg-teal-50 transition-all duration-200 group"
+            >
+              <Mail className="w-5 h-5 mr-4 text-teal-600" />
+              <div className="text-left flex-1">
+                <div className="font-medium text-gray-900 group-hover:text-teal-700">{profile.email}</div>
+                <div className="text-sm text-gray-500">Send an email</div>
+              </div>
+            </button>
 
-          {/* Phone Contact */}
-          <Button
-            onClick={handlePhoneContact}
-            variant="outline"
-            className="w-full flex items-center justify-start"
-          >
-            <Phone className="w-5 h-5 mr-3 text-gray-600" />
-            <div className="text-left">
-              <div className="font-medium text-gray-900">{profile.phone}</div>
-              <div className="text-sm text-gray-500">Call directly</div>
-            </div>
-          </Button>
+            {/* Phone Contact */}
+            <button
+              onClick={handlePhoneContact}
+              className="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:border-teal-300 hover:bg-teal-50 transition-all duration-200 group"
+            >
+              <Phone className="w-5 h-5 mr-4 text-teal-600" />
+              <div className="text-left flex-1">
+                <div className="font-medium text-gray-900 group-hover:text-teal-700">{profile.phone}</div>
+                <div className="text-sm text-gray-500">Call directly</div>
+              </div>
+            </button>
 
-          {/* Address */}
-          <div className="flex items-start p-3 border border-gray-200 rounded-lg">
-            <MapPin className="w-5 h-5 mr-3 text-gray-600 mt-0.5" />
-            <div>
-              <div className="font-medium text-gray-900">Studio Address</div>
-              <div className="text-sm text-gray-600">{profile.address}</div>
+            {/* Address */}
+            <div className="flex items-start p-4 bg-white border border-gray-200 rounded-lg">
+              <MapPin className="w-5 h-5 mr-4 text-teal-600 mt-0.5" />
+              <div className="flex-1">
+                <div className="font-medium text-gray-900">Studio Address</div>
+                <div className="text-sm text-gray-600 leading-relaxed">{profile.address}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -179,16 +167,16 @@ const Profile = () => {
 
       {/* Social Media Links */}
       <div className="px-6 mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Follow My Work</h3>
-        <div className="flex space-x-4">
+        <h3 className="text-xl font-bold text-gray-900 mb-6">Follow My Work</h3>
+        <div className="flex justify-center space-x-6">
           {profile.socialMedia.instagram && (
             <a
               href={profile.socialMedia.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full text-white hover:scale-105 transition-transform"
+              className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full text-white hover:scale-110 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              <Instagram className="w-6 h-6" />
+              <Instagram className="w-7 h-7" />
             </a>
           )}
           {profile.socialMedia.facebook && (
@@ -196,9 +184,9 @@ const Profile = () => {
               href={profile.socialMedia.facebook}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center w-12 h-12 bg-blue-600 rounded-full text-white hover:scale-105 transition-transform"
+              className="flex items-center justify-center w-14 h-14 bg-blue-600 rounded-full text-white hover:scale-110 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              <Facebook className="w-6 h-6" />
+              <Facebook className="w-7 h-7" />
             </a>
           )}
           {profile.socialMedia.twitter && (
@@ -206,9 +194,9 @@ const Profile = () => {
               href={profile.socialMedia.twitter}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center w-12 h-12 bg-gray-900 rounded-full text-white hover:scale-105 transition-transform"
+              className="flex items-center justify-center w-14 h-14 bg-gray-900 rounded-full text-white hover:scale-110 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              <Twitter className="w-6 h-6" />
+              <Twitter className="w-7 h-7" />
             </a>
           )}
         </div>

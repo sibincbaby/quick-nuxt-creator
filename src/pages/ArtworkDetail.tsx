@@ -225,7 +225,7 @@ const ArtworkDetail = () => {
           <Button 
             onClick={handleInquire}
             variant="outline" 
-            className="flex-1 border-green-500 text-green-600 font-medium py-3 rounded-lg hover:bg-green-50"
+            className="flex-1 border-teal-600 text-teal-600 font-medium py-3 rounded-lg hover:bg-teal-50"
           >
             <MessageCircle className="w-4 h-4 mr-2" />
             Inquire
