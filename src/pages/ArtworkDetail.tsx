@@ -6,77 +6,61 @@ import { useEffect, useState } from 'react';
 import { shareArtwork, getShareableData } from '../utils/socialShare';
 import { useWhatsApp } from '../hooks/useWhatsApp';
 import Lightbox from '../components/Lightbox';
+import { useFavorites } from '../hooks/useFavorites';
+import { fetchArtworkById } from '../utils/sanityQueries';
+import { getImageUrl } from '../lib/sanity';
+import { Artwork } from '../types/sanity';
 
-// Simple artwork data matching the shop page format
-const artworkData = {
-  1: {
-    id: 1,
-    title: "Whispers of Dawn",
-    price: "₹12,000",
-    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
-    description: "Capturing the ethereal beauty of early morning light filtering through ancient trees.",
-    longDescription: "This acrylic painting explores the gentle transition from night to day, capturing the soft, ethereal light that filters through morning mist. The artist's use of layered acrylics creates depth and movement, inviting viewers to feel the peaceful serenity of dawn.",
-    size: "20 x 24 inches",
-    medium: "Acrylic on Canvas",
-    year: "2024"
-  },
-  2: {
-    id: 2,
-    title: "Urban Reflections",
-    price: "₹16,000",
-    image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&h=600&fit=crop",
-    description: "The interplay of light and shadow in metropolitan spaces, captured through bold artistic expression.",
-    longDescription: "This oil painting represents the artist's exploration of urban life and the complex interplay of light and shadow in metropolitan environments. The careful balance of warm and cool tones creates a sense of movement and energy that speaks to the viewer's experience of city life.",
-    size: "30 x 40 inches",
-    medium: "Oil on Canvas",
-    year: "2024"
-  },
-  3: {
-    id: 3,
-    title: "Emotional Currents",
-    price: "₹4,000",
-    image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=600&fit=crop",
-    description: "An exploration of human emotion through abstract form and vibrant color.",
-    longDescription: "This watercolor artwork delves into the complexity of human emotions, using flowing forms and vibrant colors to represent the different layers of feeling we experience. The fluid nature of watercolor perfectly captures the ever-changing nature of our emotional landscape.",
-    size: "18 x 24 inches",
-    medium: "Watercolor on Paper",
-    year: "2024"
-  },
-  4: {
-    id: 4,
-    title: "Serenity's Edge",
-    price: "₹4,800",
-    image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&h=600&fit=crop",
-    description: "The delicate balance between motion and stillness in natural environments.",
-    longDescription: "This mixed media artwork explores the peaceful moments found in nature's constant movement. Through a combination of different materials and techniques, the artist creates a sense of calm that exists at the edge of motion, capturing those fleeting moments of perfect balance.",
-    size: "24 x 30 inches",
-    medium: "Mixed Media",
-    year: "2024"
-  }
-};
 
 const ArtworkDetail = () => {
   const { id } = useParams();
-  const [isLoved, setIsLoved] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [artwork, setArtwork] = useState<Artwork | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { inquireAboutArtwork, purchaseArtwork } = useWhatsApp();
+  const { toggleFavorite, isFavorite } = useFavorites();
 
-  // Scroll to top when component mounts to focus on image
+  // Fetch artwork data
   useEffect(() => {
+    const loadArtwork = async () => {
+      if (!id) {
+        setError('No artwork ID provided');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+        const artworkData = await fetchArtworkById(id);
+        if (artworkData) {
+          setArtwork(artworkData);
+        } else {
+          setError('Artwork not found');
+        }
+      } catch (err) {
+        setError('Failed to load artwork');
+        console.error('Error loading artwork:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadArtwork();
     window.scrollTo(0, 0);
   }, [id]);
 
-  // Get artwork data based on ID, fallback to first artwork if ID not found
-  const artworkId = parseInt(id || '1');
-  const artwork = artworkData[artworkId as keyof typeof artworkData] || artworkData[1];
-
   const handleShare = async () => {
+    if (!artwork) return;
     const shareData = getShareableData(artwork);
     await shareArtwork(shareData);
   };
 
   const handleLove = () => {
-    setIsLoved(!isLoved);
+    if (id && artwork) {
+      toggleFavorite(id, artwork.title);
+    }
   };
 
   const handleImageClick = () => {
@@ -88,46 +72,57 @@ const ArtworkDetail = () => {
   };
 
   const handleInquire = () => {
-    // Convert the legacy artwork format to match Sanity Artwork type
-    const artworkForWhatsApp = {
-      _id: artwork.id.toString(),
-      _type: 'artwork' as const,
-      title: artwork.title,
-      description: artwork.description,
-      longDescription: artwork.longDescription,
-      price: parseInt(artwork.price.replace(/[₹$,]/g, '')),
-      images: [],
-      mainImage: { _type: 'image' as const, asset: { _ref: '', _type: 'reference' as const } },
-      dimensions: { width: 0, height: 0, unit: 'cm' as const },
-      medium: artwork.medium,
-      year: parseInt(artwork.year),
-      category: '',
-      availability: 'available' as const,
-      featured: false
-    };
-    inquireAboutArtwork(artworkForWhatsApp);
+    if (!artwork) return;
+    inquireAboutArtwork(artwork);
   };
 
   const handlePurchase = () => {
-    // Convert the legacy artwork format to match Sanity Artwork type
-    const artworkForWhatsApp = {
-      _id: artwork.id.toString(),
-      _type: 'artwork' as const,
-      title: artwork.title,
-      description: artwork.description,
-      longDescription: artwork.longDescription,
-      price: parseInt(artwork.price.replace(/[₹$,]/g, '')),
-      images: [],
-      mainImage: { _type: 'image' as const, asset: { _ref: '', _type: 'reference' as const } },
-      dimensions: { width: 0, height: 0, unit: 'cm' as const },
-      medium: artwork.medium,
-      year: parseInt(artwork.year),
-      category: '',
-      availability: 'available' as const,
-      featured: false
-    };
-    purchaseArtwork(artworkForWhatsApp);
+    if (!artwork) return;
+    purchaseArtwork(artwork);
   };
+
+  // Get optimized image URL
+  const getArtworkImageUrl = (width = 800, height = 600) => {
+    if (!artwork?.mainImage) return '';
+    return getImageUrl(artwork.mainImage, width, height);
+  };
+
+  // Format dimensions
+  const formatDimensions = () => {
+    if (!artwork?.dimensions) return '';
+    const { width, height, unit } = artwork.dimensions;
+    return `${width} x ${height} ${unit}`;
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading artwork...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error || !artwork) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center px-6">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Artwork Not Found</h1>
+          <p className="text-gray-600 mb-6">{error || 'The artwork you\'re looking for doesn\'t exist.'}</p>
+          <Link to="/shop">
+            <Button className="bg-teal-700 hover:bg-teal-800">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Shop
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white pb-32">
@@ -151,8 +146,8 @@ const ArtworkDetail = () => {
           <div 
             className="w-full h-full bg-cover bg-center transition-all duration-700 ease-out" 
             style={{
-              backgroundImage: `url(${artwork.image})`,
-              viewTransitionName: `artwork-image-${artwork.id}`
+              backgroundImage: `url(${getArtworkImageUrl(800, 600)})`,
+              viewTransitionName: `artwork-image-${artwork._id}`
             }}
           ></div>
           
@@ -168,17 +163,18 @@ const ArtworkDetail = () => {
       <div className="px-6 py-6 animate-fade-in">
         {/* Price and Action Buttons */}
         <div className="flex items-center justify-between mb-6">
-          <div className="text-2xl font-bold text-gray-900">{artwork.price}</div>
+          <div className="text-2xl font-bold text-gray-900">₹{artwork.price.toLocaleString()}</div>
           <div className="flex gap-2">
             <button 
               onClick={handleLove}
               className={`p-2 rounded-full border transition-colors ${
-                isLoved 
+                isFavorite(id || '') 
                   ? 'bg-red-50 border-red-200 text-red-600' 
                   : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'
               }`}
+              title={isFavorite(id || '') ? 'Remove from favorites' : 'Add to favorites'}
             >
-              <Heart size={18} fill={isLoved ? 'currentColor' : 'none'} />
+              <Heart size={18} fill={isFavorite(id || '') ? 'currentColor' : 'none'} />
             </button>
             <button 
               onClick={handleShare}
@@ -192,20 +188,37 @@ const ArtworkDetail = () => {
         {/* Compact Details - Fixed Layout */}
         <div className="space-y-2 text-sm text-gray-600 mb-6">
           <div className="flex flex-wrap items-center gap-2">
-            <span>{artwork.size}</span>
+            <span>{formatDimensions()}</span>
             <span className="text-gray-400">•</span>
             <span>Year: {artwork.year}</span>
           </div>
-          <div>
-            <span className="font-medium">Medium: </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-medium">Medium:</span>
             <span>{artwork.medium}</span>
+            <span className="text-gray-400">•</span>
+            <span className="font-medium">Category:</span>
+            <span className="capitalize">{artwork.category}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="font-medium">Availability:</span>
+            <span className={`capitalize px-2 py-1 rounded-full text-xs font-medium ${
+              artwork.availability === 'available' 
+                ? 'bg-green-100 text-green-800' 
+                : artwork.availability === 'sold'
+                ? 'bg-red-100 text-red-800'
+                : 'bg-yellow-100 text-yellow-800'
+            }`}>
+              {artwork.availability}
+            </span>
           </div>
         </div>
 
         {/* Description */}
         <div className="mb-8">
           <h2 className="text-lg font-bold text-gray-800 mb-3">Description</h2>
-          <p className="text-gray-700 leading-relaxed">{artwork.longDescription}</p>
+          <p className="text-gray-700 leading-relaxed">
+            {artwork.longDescription || artwork.description}
+          </p>
         </div>
 
         {/* Additional space for content */}
@@ -215,13 +228,23 @@ const ArtworkDetail = () => {
       {/* Sticky Action Buttons */}
       <div className="fixed bottom-16 left-0 right-0 bg-white px-4 pt-3 pb-4">
         <div className="flex gap-3 max-w-md mx-auto">
-          <Button 
-            onClick={handlePurchase}
-            className="flex-1 bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 rounded-lg"
-          >
-            <ShoppingCart className="w-4 h-4 mr-2" />
-            Buy via WhatsApp
-          </Button>
+          {artwork.availability === 'available' ? (
+            <Button 
+              onClick={handlePurchase}
+              className="flex-1 bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 rounded-lg"
+            >
+              <ShoppingCart className="w-4 h-4 mr-2" />
+              Buy via WhatsApp
+            </Button>
+          ) : (
+            <Button 
+              disabled
+              className="flex-1 bg-gray-400 text-white font-medium py-3 rounded-lg cursor-not-allowed"
+            >
+              <ShoppingCart className="w-4 h-4 mr-2" />
+              {artwork.availability === 'sold' ? 'Sold' : 'Reserved'}
+            </Button>
+          )}
           <Button 
             onClick={handleInquire}
             variant="outline" 
@@ -239,8 +262,8 @@ const ArtworkDetail = () => {
       <Lightbox
         isOpen={isLightboxOpen}
         onClose={handleCloseLightbox}
-        imageSrc={artwork.image}
-        imageAlt={artwork.title}
+        imageSrc={getArtworkImageUrl(1200, 900)}
+        imageAlt={artwork.mainImage?.alt || artwork.title}
         title={artwork.title}
       />
     </div>

@@ -2,24 +2,30 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import BottomNavigation from '../components/BottomNavigation';
 import LazyImage from '../components/LazyImage';
+import { useEffect, useState } from 'react';
+import { fetchFeaturedArtworks } from '../utils/sanityQueries';
+import { Artwork } from '../types/sanity';
+import { getImageUrl } from '../lib/sanity';
 
 const Index = () => {
-  const featuredArtworks = [
-    {
-      id: 1,
-      title: "Whispers of the Wind",
-      image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=500&fit=crop",
-      price: "₹12,000",
-      type: "acrylic"
-    },
-    {
-      id: 2,
-      title: "Serenity's Embrace",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=500&fit=crop",
-      price: "₹16,000",
-      type: "oil"
-    }
-  ];
+  const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadFeaturedArtworks = async () => {
+      try {
+        setIsLoading(true);
+        const artworks = await fetchFeaturedArtworks(4);
+        setFeaturedArtworks(artworks);
+      } catch (error) {
+        console.error('Error loading featured artworks:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadFeaturedArtworks();
+  }, []);
 
 
   return (
@@ -47,26 +53,38 @@ const Index = () => {
           </Link>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          {featuredArtworks.map((artwork) => (
-            <Link 
-              key={artwork.id} 
-              to={`/artwork/${artwork.id}`}
-              className="group"
-            >
-              <div className="bg-orange-50 rounded-lg p-4 shadow-sm group-hover:shadow-md transition-shadow">
-                <div className="w-full h-48 rounded-lg mb-3 overflow-hidden">
-                  <LazyImage
-                    src={artwork.image}
-                    alt={artwork.title}
-                    className="w-full h-full"
-                  />
-                </div>
-                <h3 className="font-medium text-gray-900 text-sm mb-1">{artwork.title}</h3>
-                <p className="text-teal-600 font-semibold text-sm mb-1">{artwork.price}</p>
-                <p className="text-xs text-gray-500 capitalize">{artwork.type}</p>
+          {isLoading ? (
+            // Loading skeleton
+            Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="bg-orange-50 rounded-lg p-4 shadow-sm">
+                <div className="w-full h-48 rounded-lg mb-3 bg-gray-200 animate-pulse"></div>
+                <div className="h-4 bg-gray-200 animate-pulse rounded mb-2"></div>
+                <div className="h-3 bg-gray-200 animate-pulse rounded mb-1 w-20"></div>
+                <div className="h-3 bg-gray-200 animate-pulse rounded w-16"></div>
               </div>
-            </Link>
-          ))}
+            ))
+          ) : (
+            featuredArtworks.map((artwork) => (
+              <Link 
+                key={artwork._id} 
+                to={`/artwork/${artwork._id}`}
+                className="group"
+              >
+                <div className="bg-orange-50 rounded-lg p-4 shadow-sm group-hover:shadow-md transition-shadow">
+                  <div className="w-full h-48 rounded-lg mb-3 overflow-hidden">
+                    <LazyImage
+                      src={artwork.mainImage ? getImageUrl(artwork.mainImage, 400, 500) : artwork.images?.[0] ? getImageUrl(artwork.images[0], 400, 500) : ''}
+                      alt={artwork.title || 'Artwork'}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h3 className="font-medium text-gray-900 text-sm mb-1">{artwork.title}</h3>
+                  <p className="text-teal-600 font-semibold text-sm mb-1">₹{artwork.price?.toLocaleString('en-IN') || '0'}</p>
+                  <p className="text-xs text-gray-500 capitalize">{artwork.medium}</p>
+                </div>
+              </Link>
+            ))
+          )}
         </div>
       </section>
 

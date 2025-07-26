@@ -46,7 +46,7 @@ export interface Artwork {
   medium: string;
   year: number;
   category: string;
-  availability: 'available' | 'sold' | 'reserved';
+  availability: 'available' | 'sold' | 'reserved' | 'portfolio';
   featured: boolean;
   tags?: string[];
 }

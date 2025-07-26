@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, Palette, Heart, Share2 } from 'lucide-react';
 import BottomNavigation from '../components/BottomNavigation';
@@ -9,6 +9,10 @@ import { FeaturedWorksSkeleton, ArtworkGridSkeleton } from '../components/Skelet
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { fuzzySearch, getFilterCounts } from '../utils/searchUtils';
 import { shareArtwork, getShareableData } from '../utils/socialShare';
+import { fetchArtworks } from '../utils/sanityQueries';
+import { Artwork } from '../types/sanity';
+import { getImageUrl } from '../lib/sanity';
+import { useFavorites } from '../hooks/useFavorites';
 
 const Portfolio = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -20,85 +24,49 @@ const Portfolio = () => {
     alt: string;
     title: string;
   } | null>(null);
-  const [likedItems, setLikedItems] = useState<Set<number>>(new Set());
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [portfolioItems, setPortfolioItems] = useState<Artwork[]>([]);
+  const { toggleFavorite, isFavorite } = useFavorites();
 
-  const portfolioItems = [
-    {
-      id: 1,
-      title: "Whispers of Dawn",
-      image: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&h=600&fit=crop",
-      medium: "Oil on Canvas",
-      year: "2024",
-      series: "Nature's Symphony",
-      description: "Capturing the ethereal beauty of early morning light filtering through ancient trees.",
-      category: "oil",
-      featured: true
-    },
-    {
-      id: 2,
-      title: "Urban Reflections",
-      image: "https://images.unsplash.com/photo-1544967919-2f8e5e1b6c6e?w=600&h=600&fit=crop",
-      medium: "Acrylic on Canvas",
-      year: "2024",
-      series: "City Life",
-      description: "The interplay of light and shadow in metropolitan spaces.",
-      category: "acrylic",
-      featured: false
-    },
-    {
-      id: 3,
-      title: "Emotional Currents",
-      image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=600&h=600&fit=crop",
-      medium: "Mixed Media",
-      year: "2023",
-      series: "Inner Landscapes",
-      description: "An exploration of human emotion through abstract form and vibrant color.",
-      category: "mixed",
-      featured: true
-    },
-    {
-      id: 4,
-      title: "Serenity's Edge",
-      image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=600&h=600&fit=crop",
-      medium: "Watercolor",
-      year: "2023",
-      series: "Water Studies",
-      description: "The delicate balance between motion and stillness in aquatic environments.",
-      category: "watercolor",
-      featured: false
-    },
-    {
-      id: 5,
-      title: "Golden Hour Dreams",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=600&fit=crop",
-      medium: "Oil on Canvas",
-      year: "2024",
-      series: "Nature's Symphony",
-      description: "The warm embrace of evening light on pastoral landscapes.",
-      category: "oil",
-      featured: true
-    },
-    {
-      id: 6,
-      title: "Metamorphosis",
-      image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600&h=600&fit=crop",
-      medium: "Acrylic on Canvas",
-      year: "2023",
-      series: "Transformation",
-      description: "The beauty of change and growth captured in flowing forms.",
-      category: "acrylic",
-      featured: false
-    }
-  ];
+  // Load portfolio items from Sanity (only items marked as 'portfolio')
+  useEffect(() => {
+    const loadPortfolioItems = async () => {
+      try {
+        setIsLoading(true);
+        const artworksData = await fetchArtworks();
+        // Filter to show only portfolio items (not for sale)
+        const portfolioArtworks = artworksData.filter(artwork => 
+          artwork.availability === 'portfolio'
+        );
+        setPortfolioItems(portfolioArtworks);
+      } catch (error) {
+        console.error('Error loading portfolio items:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPortfolioItems();
+  }, []);
+
+  // Transform items for filtering (map Sanity data to expected format)
+  const transformedItems = useMemo(() => {
+    return portfolioItems.map(item => ({
+      ...item,
+      id: item._id, // Add id for search compatibility
+      category: item.medium?.toLowerCase().replace(/\s+/g, '-') || 'other',
+      image: item.mainImage ? getImageUrl(item.mainImage, 600, 600) : item.images?.[0] ? getImageUrl(item.images[0], 600, 600) : '',
+      year: item.year?.toString() || new Date().getFullYear().toString()
+    }));
+  }, [portfolioItems]);
 
   // Get filter counts
-  const categoryCounts = useMemo(() => getFilterCounts(portfolioItems, 'category'), []);
-  const yearCounts = useMemo(() => getFilterCounts(portfolioItems, 'year'), []);
+  const categoryCounts = useMemo(() => getFilterCounts(transformedItems, 'category'), [transformedItems]);
+  const yearCounts = useMemo(() => getFilterCounts(transformedItems, 'year'), [transformedItems]);
 
   const filteredItems = useMemo(() => {
-    // Cast portfolioItems to SearchableItem[] for fuzzy search, then cast back
-    let filtered = fuzzySearch(portfolioItems as any, searchTerm) as typeof portfolioItems;
+    // Cast transformedItems to SearchableItem[] for fuzzy search, then cast back
+    let filtered = fuzzySearch(transformedItems as any, searchTerm) as typeof transformedItems;
     
     if (selectedFilter === 'featured') {
       filtered = filtered.filter(item => item.featured);
@@ -117,29 +85,21 @@ const Portfolio = () => {
           return parseInt(b.year || '0') - parseInt(a.year || '0');
       }
     });
-  }, [searchTerm, selectedFilter, sortBy]);
+  }, [transformedItems, searchTerm, selectedFilter, sortBy]);
 
-  const featuredWorks = portfolioItems.filter(item => item.featured);
+  const featuredWorks = transformedItems.filter(item => item.featured);
 
-  const openLightbox = (item: typeof portfolioItems[0]) => {
+  const openLightbox = (item: typeof transformedItems[0]) => {
     setSelectedImage({
       src: item.image,
-      alt: item.title,
-      title: item.title
+      alt: item.title || 'Artwork',
+      title: item.title || 'Artwork'
     });
     setLightboxOpen(true);
   };
 
-  const handleHeartClick = (itemId: number) => {
-    setLikedItems(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(itemId)) {
-        newSet.delete(itemId);
-      } else {
-        newSet.add(itemId);
-      }
-      return newSet;
-    });
+  const handleHeartClick = (item: any) => {
+    toggleFavorite(item._id, item.title);
   };
 
   const handleShare = async (item: any) => {
@@ -149,16 +109,19 @@ const Portfolio = () => {
 
   const filters = [
     {
-      label: 'Category',
+      label: 'Medium',
       key: 'category',
       value: selectedFilter === 'featured' ? 'all' : selectedFilter,
       onChange: (value: string) => setSelectedFilter(value),
       options: [
-        { value: 'all', label: 'All Categories', count: portfolioItems.length },
-        { value: 'oil', label: 'Oil Paintings', count: categoryCounts.oil || 0 },
-        { value: 'acrylic', label: 'Acrylic Paintings', count: categoryCounts.acrylic || 0 },
+        { value: 'all', label: 'All Mediums', count: transformedItems.length },
+        { value: 'oil-on-canvas', label: 'Oil on Canvas', count: categoryCounts['oil-on-canvas'] || 0 },
+        { value: 'acrylic', label: 'Acrylic', count: categoryCounts.acrylic || 0 },
         { value: 'watercolor', label: 'Watercolor', count: categoryCounts.watercolor || 0 },
-        { value: 'mixed', label: 'Mixed Media', count: categoryCounts.mixed || 0 },
+        { value: 'mixed-media', label: 'Mixed Media', count: categoryCounts['mixed-media'] || 0 },
+        { value: 'digital-art', label: 'Digital Art', count: categoryCounts['digital-art'] || 0 },
+        { value: 'sculpture', label: 'Sculpture', count: categoryCounts.sculpture || 0 },
+        { value: 'photography', label: 'Photography', count: categoryCounts.photography || 0 },
       ]
     },
     {
@@ -167,9 +130,12 @@ const Portfolio = () => {
       value: 'all',
       onChange: () => {},
       options: [
-        { value: 'all', label: 'All Years', count: portfolioItems.length },
-        { value: '2024', label: '2024', count: yearCounts['2024'] || 0 },
-        { value: '2023', label: '2023', count: yearCounts['2023'] || 0 },
+        { value: 'all', label: 'All Years', count: transformedItems.length },
+        ...Object.entries(yearCounts).map(([year, count]) => ({
+          value: year,
+          label: year,
+          count: count || 0
+        }))
       ]
     }
   ];
@@ -213,25 +179,26 @@ const Portfolio = () => {
         ) : (
           <div className="flex gap-4 overflow-x-auto pb-4">
             {featuredWorks.map((work) => (
-              <div key={work.id} className="group flex-shrink-0">
+              <div key={work._id} className="group flex-shrink-0">
                 <div className="w-64 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden group-hover:shadow-md transition-shadow">
                   <div className="w-full h-48 cursor-pointer relative" onClick={() => openLightbox(work)}>
                     <LazyImage
                       src={work.image}
-                      alt={work.title}
-                      className="w-full h-full"
+                      alt={work.title || 'Artwork'}
+                      className="w-full h-full object-cover"
                     />
                     <div className="absolute top-2 right-2 flex gap-1">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleHeartClick(work.id);
+                          handleHeartClick(work);
                         }}
                         className={`p-1.5 rounded-full bg-white/80 backdrop-blur-sm transition-colors ${
-                          likedItems.has(work.id) ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
+                          isFavorite(work._id) ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
                         }`}
+                        title={isFavorite(work._id) ? 'Remove from favorites' : 'Add to favorites'}
                       >
-                        <Heart className={`w-3 h-3 ${likedItems.has(work.id) ? 'fill-current' : ''}`} />
+                        <Heart className={`w-3 h-3 ${isFavorite(work._id) ? 'fill-current' : ''}`} />
                       </button>
                       <button
                         onClick={(e) => {
@@ -245,7 +212,7 @@ const Portfolio = () => {
                     </div>
                   </div>
                   <div className="p-4">
-                    <Link to={`/artwork/${work.id}`}>
+                    <Link to={`/artwork/${work._id}`}>
                       <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
                         {work.title}
                       </h3>
@@ -289,26 +256,27 @@ const Portfolio = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredItems.map((item) => (
-                  <div key={item.id} className="group">
+                  <div key={item._id} className="group">
                     <article className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden group-hover:shadow-md transition-all duration-300">
                       <div className="w-full h-64 cursor-pointer group-hover:scale-102 transition-transform duration-300 overflow-hidden relative"
                            onClick={() => openLightbox(item)}>
                         <LazyImage
                           src={item.image}
-                          alt={item.title}
-                          className="w-full h-full"
+                          alt={item.title || 'Artwork'}
+                          className="w-full h-full object-cover"
                         />
                         <div className="absolute top-2 right-2 flex gap-1">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleHeartClick(item.id);
+                              handleHeartClick(item);
                             }}
                             className={`p-1.5 rounded-full bg-white/80 backdrop-blur-sm transition-colors ${
-                              likedItems.has(item.id) ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
+                              isFavorite(item._id) ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
                             }`}
+                            title={isFavorite(item._id) ? 'Remove from favorites' : 'Add to favorites'}
                           >
-                            <Heart className={`w-3 h-3 ${likedItems.has(item.id) ? 'fill-current' : ''}`} />
+                            <Heart className={`w-3 h-3 ${isFavorite(item._id) ? 'fill-current' : ''}`} />
                           </button>
                           <button
                             onClick={(e) => {
@@ -324,12 +292,12 @@ const Portfolio = () => {
                       <div className="p-5">
                         <div className="flex items-start justify-between mb-3">
                           <div>
-                            <Link to={`/artwork/${item.id}`}>
+                            <Link to={`/artwork/${item._id}`}>
                               <h3 className="font-bold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
                                 {item.title}
                               </h3>
                             </Link>
-                            <p className="text-sm text-teal-600 font-medium">{item.series}</p>
+                            <p className="text-sm text-teal-600 font-medium">{item.category}</p>
                           </div>
                           <div className="flex items-center gap-1 text-xs text-gray-500">
                             <Calendar className="w-3 h-3" />
