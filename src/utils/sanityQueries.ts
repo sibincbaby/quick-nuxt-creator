@@ -120,6 +120,7 @@ export const fetchArtistProfile = async (): Promise<ArtistProfile | null> => {
     name,
     bio,
     profileImage,
+    coverImage,
     email,
     phone,
     address,

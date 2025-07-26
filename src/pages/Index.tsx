@@ -3,28 +3,33 @@ import { ArrowRight } from 'lucide-react';
 import BottomNavigation from '../components/BottomNavigation';
 import LazyImage from '../components/LazyImage';
 import { useEffect, useState } from 'react';
-import { fetchFeaturedArtworks } from '../utils/sanityQueries';
-import { Artwork } from '../types/sanity';
+import { fetchFeaturedArtworks, fetchArtistProfile } from '../utils/sanityQueries';
+import { Artwork, ArtistProfile } from '../types/sanity';
 import { getImageUrl } from '../lib/sanity';
 
 const Index = () => {
   const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
+  const [artistProfile, setArtistProfile] = useState<ArtistProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadFeaturedArtworks = async () => {
+    const loadData = async () => {
       try {
         setIsLoading(true);
-        const artworks = await fetchFeaturedArtworks(4);
+        const [artworks, profile] = await Promise.all([
+          fetchFeaturedArtworks(4),
+          fetchArtistProfile()
+        ]);
         setFeaturedArtworks(artworks);
+        setArtistProfile(profile);
       } catch (error) {
-        console.error('Error loading featured artworks:', error);
+        console.error('Error loading data:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadFeaturedArtworks();
+    loadData();
   }, []);
 
 
@@ -37,7 +42,17 @@ const Index = () => {
 
       {/* Hero Image */}
       <div className="px-6 mb-8">
-        <div className="w-full h-64 bg-gradient-to-r from-orange-400 via-orange-300 to-blue-400 rounded-lg shadow-sm"></div>
+        {artistProfile?.coverImage ? (
+          <div className="w-full h-64 rounded-lg shadow-sm overflow-hidden">
+            <LazyImage
+              src={getImageUrl(artistProfile.coverImage, 800, 400)}
+              alt={artistProfile.coverImage.alt || 'Cover image'}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ) : (
+          <div className="w-full h-64 bg-gradient-to-r from-orange-400 via-orange-300 to-blue-400 rounded-lg shadow-sm"></div>
+        )}
       </div>
 
       {/* Featured Artworks */}

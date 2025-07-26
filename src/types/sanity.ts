@@ -15,6 +15,7 @@ export interface ArtistProfile {
   name: string;
   bio: string;
   profileImage: SanityImage;
+  coverImage?: SanityImage;
   email: string;
   phone: string;
   address: string;
