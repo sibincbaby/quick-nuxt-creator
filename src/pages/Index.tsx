@@ -21,22 +21,6 @@ const Index = () => {
     }
   ];
 
-  const blogPosts = [
-    {
-      id: 1,
-      category: "Artistic Process",
-      title: "The Journey of Creation",
-      summary: "Explore the artist's creative process, from initial inspiration to the final masterpiece.",
-      image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=100&h=100&fit=crop"
-    },
-    {
-      id: 2,
-      category: "Behind the Canvas",
-      title: "Stories Behind the Art",
-      summary: "Discover the stories and emotions that fuel the artist's work, adding depth and meaning to each piece.",
-      image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=100&h=100&fit=crop"
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-white pb-20">
@@ -86,34 +70,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Recent Blog Posts */}
-      <section className="px-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Recent Blog Posts</h2>
-        <div className="space-y-6">
-          {blogPosts.map((post) => (
-            <Link 
-              key={post.id} 
-              to={`/blog/${post.id}`}
-              className="flex gap-4 group"
-            >
-              <div className="w-20 h-20 rounded-lg flex-shrink-0 overflow-hidden">
-                <LazyImage
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-full"
-                />
-              </div>
-              <div className="flex-1">
-                <p className="text-teal-600 text-sm font-medium mb-1">{post.category}</p>
-                <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-teal-700 transition-colors">
-                  {post.title}
-                </h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{post.summary}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
 
       <BottomNavigation />
     </div>

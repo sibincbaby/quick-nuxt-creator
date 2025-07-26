@@ -1,9 +1,10 @@
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Heart, Share, ZoomIn } from 'lucide-react';
+import { ArrowLeft, Heart, Share, ZoomIn, MessageCircle, ShoppingCart } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import BottomNavigation from '../components/BottomNavigation';
 import { useEffect, useState } from 'react';
 import { shareArtwork, getShareableData } from '../utils/socialShare';
+import { useWhatsApp } from '../hooks/useWhatsApp';
 import Lightbox from '../components/Lightbox';
 
 // Simple artwork data matching the shop page format
@@ -58,6 +59,7 @@ const ArtworkDetail = () => {
   const { id } = useParams();
   const [isLoved, setIsLoved] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const { inquireAboutArtwork, purchaseArtwork } = useWhatsApp();
 
   // Scroll to top when component mounts to focus on image
   useEffect(() => {
@@ -83,6 +85,48 @@ const ArtworkDetail = () => {
 
   const handleCloseLightbox = () => {
     setIsLightboxOpen(false);
+  };
+
+  const handleInquire = () => {
+    // Convert the legacy artwork format to match Sanity Artwork type
+    const artworkForWhatsApp = {
+      _id: artwork.id.toString(),
+      _type: 'artwork' as const,
+      title: artwork.title,
+      description: artwork.description,
+      longDescription: artwork.longDescription,
+      price: parseInt(artwork.price.replace(/[₹$,]/g, '')),
+      images: [],
+      mainImage: { _type: 'image' as const, asset: { _ref: '', _type: 'reference' as const } },
+      dimensions: { width: 0, height: 0, unit: 'cm' as const },
+      medium: artwork.medium,
+      year: parseInt(artwork.year),
+      category: '',
+      availability: 'available' as const,
+      featured: false
+    };
+    inquireAboutArtwork(artworkForWhatsApp);
+  };
+
+  const handlePurchase = () => {
+    // Convert the legacy artwork format to match Sanity Artwork type
+    const artworkForWhatsApp = {
+      _id: artwork.id.toString(),
+      _type: 'artwork' as const,
+      title: artwork.title,
+      description: artwork.description,
+      longDescription: artwork.longDescription,
+      price: parseInt(artwork.price.replace(/[₹$,]/g, '')),
+      images: [],
+      mainImage: { _type: 'image' as const, asset: { _ref: '', _type: 'reference' as const } },
+      dimensions: { width: 0, height: 0, unit: 'cm' as const },
+      medium: artwork.medium,
+      year: parseInt(artwork.year),
+      category: '',
+      availability: 'available' as const,
+      featured: false
+    };
+    purchaseArtwork(artworkForWhatsApp);
   };
 
   return (
@@ -168,13 +212,22 @@ const ArtworkDetail = () => {
         <div className="h-20"></div>
       </div>
 
-      {/* Sticky Action Buttons - No border, just padding */}
+      {/* Sticky Action Buttons */}
       <div className="fixed bottom-16 left-0 right-0 bg-white px-4 pt-3 pb-4">
         <div className="flex gap-3 max-w-md mx-auto">
-          <Button className="flex-1 bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 rounded-lg">
-            Buy Now
+          <Button 
+            onClick={handlePurchase}
+            className="flex-1 bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 rounded-lg"
+          >
+            <ShoppingCart className="w-4 h-4 mr-2" />
+            Buy via WhatsApp
           </Button>
-          <Button variant="outline" className="flex-1 border-gray-300 text-gray-700 font-medium py-3 rounded-lg hover:bg-gray-50">
+          <Button 
+            onClick={handleInquire}
+            variant="outline" 
+            className="flex-1 border-green-500 text-green-600 font-medium py-3 rounded-lg hover:bg-green-50"
+          >
+            <MessageCircle className="w-4 h-4 mr-2" />
             Inquire
           </Button>
         </div>

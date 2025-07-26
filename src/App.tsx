@@ -10,7 +10,7 @@ import ArtworkDetail from "./pages/ArtworkDetail";
 import Shop from "./pages/Shop";
 import Profile from "./pages/Profile";
 import Portfolio from "./pages/Portfolio";
-import Blog from "./pages/Blog";
+
 
 const queryClient = new QueryClient();
 
@@ -24,7 +24,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/artwork/:id" element={<ArtworkDetail />} />
           <Route path="/shop" element={<Shop />} />
-          <Route path="/blog" element={<Blog />} />
+          
           <Route path="/profile" element={<Profile />} />
           <Route path="/portfolio" element={<Portfolio />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

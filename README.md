@@ -1,73 +1,373 @@
-# Welcome to your Lovable project
+# Artisan's Canvas - Artist Portfolio Website
 
-## Project info
+A modern, responsive portfolio website for artists to showcase their work and connect with potential buyers through WhatsApp integration.
 
-**URL**: https://lovable.dev/projects/4b01f46f-df5d-4327-8a9c-551b1c1f90b4
+## Features
 
-## How can I edit this code?
+- **Artwork Gallery**: Browse and view detailed artwork information
+- **WhatsApp Integration**: Direct contact for inquiries and purchases
+- **Artist Contact Page**: Professional contact information and social media links
+- **Responsive Design**: Works perfectly on mobile and desktop
+- **Sanity CMS Integration**: Easy content management
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Frontend**: React 18, TypeScript, Tailwind CSS
+- **Routing**: React Router DOM
+- **UI Components**: Radix UI with custom styling
+- **CMS**: Sanity.io for content management
+- **Build Tool**: Vite
+- **Icons**: Lucide React
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/4b01f46f-df5d-4327-8a9c-551b1c1f90b4) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js 18+ 
+- npm or yarn
+- Sanity.io account (for CMS)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-Follow these steps:
+3. Set up environment variables:
+   ```bash
+   # Create a .env file in the root directory
+   VITE_SANITY_PROJECT_ID=your_sanity_project_id
+   VITE_SANITY_DATASET=production
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Sanity CMS Setup
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Required Schemas
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+Create the following schemas in your Sanity Studio:
+
+#### 1. Artwork Schema (`artwork.js`)
+
+```javascript
+export default {
+  name: 'artwork',
+  title: 'Artwork',
+  type: 'document',
+  fields: [
+    {
+      name: 'title',
+      title: 'Title',
+      type: 'string',
+      validation: Rule => Rule.required()
+    },
+    {
+      name: 'description',
+      title: 'Short Description',
+      type: 'text',
+      validation: Rule => Rule.required().max(200)
+    },
+    {
+      name: 'longDescription',
+      title: 'Detailed Description',
+      type: 'text'
+    },
+    {
+      name: 'price',
+      title: 'Price (in local currency)',
+      type: 'number',
+      validation: Rule => Rule.required().min(0)
+    },
+    {
+      name: 'mainImage',
+      title: 'Main Image',
+      type: 'image',
+      options: {
+        hotspot: true
+      },
+      validation: Rule => Rule.required()
+    },
+    {
+      name: 'images',
+      title: 'Additional Images',
+      type: 'array',
+      of: [{type: 'image', options: {hotspot: true}}],
+      options: {
+        layout: 'grid'
+      }
+    },
+    {
+      name: 'dimensions',
+      title: 'Dimensions',
+      type: 'object',
+      fields: [
+        {name: 'width', title: 'Width', type: 'number'},
+        {name: 'height', title: 'Height', type: 'number'},
+        {
+          name: 'unit',
+          title: 'Unit',
+          type: 'string',
+          options: {
+            list: [
+              {title: 'Centimeters', value: 'cm'},
+              {title: 'Inches', value: 'in'}
+            ]
+          }
+        }
+      ]
+    },
+    {
+      name: 'medium',
+      title: 'Medium',
+      type: 'string',
+      options: {
+        list: [
+          'Oil on Canvas',
+          'Acrylic on Canvas',
+          'Watercolor',
+          'Mixed Media',
+          'Digital Art',
+          'Sculpture',
+          'Photography'
+        ]
+      }
+    },
+    {
+      name: 'year',
+      title: 'Year Created',
+      type: 'number',
+      validation: Rule => Rule.required().min(1900).max(new Date().getFullYear())
+    },
+    {
+      name: 'category',
+      title: 'Category',
+      type: 'string',
+      options: {
+        list: [
+          'Abstract',
+          'Portrait',
+          'Landscape',
+          'Still Life',
+          'Contemporary',
+          'Modern',
+          'Traditional'
+        ]
+      }
+    },
+    {
+      name: 'availability',
+      title: 'Availability',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Available', value: 'available'},
+          {title: 'Sold', value: 'sold'},
+          {title: 'Reserved', value: 'reserved'}
+        ]
+      },
+      initialValue: 'available'
+    },
+    {
+      name: 'featured',
+      title: 'Featured Artwork',
+      type: 'boolean',
+      description: 'Show this artwork on the homepage',
+      initialValue: false
+    },
+    {
+      name: 'tags',
+      title: 'Tags',
+      type: 'array',
+      of: [{type: 'string'}],
+      options: {
+        layout: 'tags'
+      }
+    }
+  ],
+  preview: {
+    select: {
+      title: 'title',
+      media: 'mainImage',
+      price: 'price'
+    },
+    prepare(selection) {
+      const {title, media, price} = selection
+      return {
+        title: title,
+        subtitle: price ? `₹${price}` : 'No price set',
+        media: media
+      }
+    }
+  }
+}
 ```
 
-**Edit a file directly in GitHub**
+#### 2. Artist Profile Schema (`artistProfile.js`)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```javascript
+export default {
+  name: 'artistProfile',
+  title: 'Artist Profile',
+  type: 'document',
+  fields: [
+    {
+      name: 'name',
+      title: 'Artist Name',
+      type: 'string',
+      validation: Rule => Rule.required()
+    },
+    {
+      name: 'bio',
+      title: 'Biography',
+      type: 'text',
+      validation: Rule => Rule.required()
+    },
+    {
+      name: 'profileImage',
+      title: 'Profile Image',
+      type: 'image',
+      options: {
+        hotspot: true
+      }
+    },
+    {
+      name: 'email',
+      title: 'Email',
+      type: 'string',
+      validation: Rule => Rule.required().email()
+    },
+    {
+      name: 'phone',
+      title: 'Phone Number',
+      type: 'string',
+      validation: Rule => Rule.required()
+    },
+    {
+      name: 'address',
+      title: 'Studio Address',
+      type: 'text'
+    },
+    {
+      name: 'socialMedia',
+      title: 'Social Media',
+      type: 'object',
+      fields: [
+        {name: 'instagram', title: 'Instagram URL', type: 'url'},
+        {name: 'facebook', title: 'Facebook URL', type: 'url'},
+        {name: 'twitter', title: 'Twitter URL', type: 'url'},
+        {name: 'linkedin', title: 'LinkedIn URL', type: 'url'}
+      ]
+    },
+    {
+      name: 'artistStatement',
+      title: 'Artist Statement',
+      type: 'text'
+    },
+    {
+      name: 'workingHours',
+      title: 'Studio Working Hours',
+      type: 'text',
+      description: 'Enter working hours (supports line breaks)'
+    }
+  ]
+}
+```
 
-**Use GitHub Codespaces**
+#### 3. Site Settings Schema (`siteSettings.js`)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```javascript
+export default {
+  name: 'siteSettings',
+  title: 'Site Settings',
+  type: 'document',
+  fields: [
+    {
+      name: 'whatsappNumber',
+      title: 'WhatsApp Number',
+      type: 'string',
+      description: 'Include country code (e.g., +1234567890)',
+      validation: Rule => Rule.required()
+    },
+    {
+      name: 'businessHours',
+      title: 'Business Hours',
+      type: 'text'
+    },
+    {
+      name: 'location',
+      title: 'Location',
+      type: 'object',
+      fields: [
+        {name: 'address', title: 'Address', type: 'string'},
+        {name: 'city', title: 'City', type: 'string'},
+        {name: 'country', title: 'Country', type: 'string'},
+        {
+          name: 'coordinates',
+          title: 'Coordinates',
+          type: 'object',
+          fields: [
+            {name: 'lat', title: 'Latitude', type: 'number'},
+            {name: 'lng', title: 'Longitude', type: 'number'}
+          ]
+        }
+      ]
+    },
+    {
+      name: 'socialMedia',
+      title: 'Social Media',
+      type: 'object',
+      fields: [
+        {name: 'instagram', title: 'Instagram URL', type: 'url'},
+        {name: 'facebook', title: 'Facebook URL', type: 'url'},
+        {name: 'twitter', title: 'Twitter URL', type: 'url'},
+        {name: 'linkedin', title: 'LinkedIn URL', type: 'url'}
+      ]
+    }
+  ]
+}
+```
 
-## What technologies are used for this project?
+## WhatsApp Integration
 
-This project is built with:
+The website includes automatic WhatsApp integration for:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **Artwork Inquiries**: Pre-filled messages with artwork details
+- **Purchase Requests**: Direct purchase communication
+- **General Contact**: Easy access to artist communication
 
-## How can I deploy this project?
+### Message Templates
 
-Simply open [Lovable](https://lovable.dev/projects/4b01f46f-df5d-4327-8a9c-551b1c1f90b4) and click on Share -> Publish.
+- **Inquiry**: "Hi! I'm interested in the artwork '[Title]' priced at [Price]. Could you please provide more details?"
+- **Purchase**: "Hello! I would like to purchase the artwork '[Title]' priced at [Price]. Please let me know the next steps."
+- **General**: "Hello! I'm interested in your artwork. Could we discuss your available pieces?"
 
-## Can I connect a custom domain to my Lovable project?
+## Navigation Structure
 
-Yes, you can!
+- **Home**: Featured artworks and artist introduction
+- **Shop**: Complete artwork gallery with search and filters
+- **Contact**: Artist information, contact methods, and social media
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Deployment
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+The website can be deployed to any static hosting service:
+
+- **Vercel** (Recommended)
+- **Netlify**
+- **GitHub Pages**
+
+### Environment Variables for Production
+
+```bash
+VITE_SANITY_PROJECT_ID=your_sanity_project_id
+VITE_SANITY_DATASET=production
+```
+
+## License
+
+This project is proprietary and confidential. All rights reserved.
