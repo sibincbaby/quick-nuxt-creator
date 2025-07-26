@@ -11,7 +11,6 @@ import { fetchArtworkById } from '../utils/sanityQueries';
 import { getImageUrl } from '../lib/sanity';
 import { Artwork } from '../types/sanity';
 
-
 const ArtworkDetail = () => {
   const { id } = useParams();
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
