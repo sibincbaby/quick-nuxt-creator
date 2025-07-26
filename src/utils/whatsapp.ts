@@ -2,12 +2,12 @@ import { Artwork } from '../types/sanity';
 
 // Format WhatsApp message for artwork inquiry
 export const formatArtworkInquiryMessage = (artwork: Artwork): string => {
-  return `Hi! I'm interested in the artwork "${artwork.title}" priced at $${artwork.price}. Could you please provide more details?`;
+  return `Hi! I'm interested in the artwork "${artwork.title}" priced at Rs.${artwork.price}. Could you please provide more details?`;
 };
 
 // Format WhatsApp message for artwork purchase
 export const formatArtworkPurchaseMessage = (artwork: Artwork): string => {
-  return `Hello! I would like to purchase the artwork "${artwork.title}" priced at $${artwork.price}. Please let me know the next steps.`;
+  return `Hello! I would like to purchase the artwork "${artwork.title}" priced at Rs.${artwork.price}. Please let me know the next steps.`;
 };
 
 // Format general contact message
